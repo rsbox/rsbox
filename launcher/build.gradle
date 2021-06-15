@@ -11,4 +11,7 @@ run {
 dependencies {
     implementation project(":common")
     implementation project(":cache")
+    implementation project(":config")
+    implementation project(":engine")
+    implementation project(":net")
 }

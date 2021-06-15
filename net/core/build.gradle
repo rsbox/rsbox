@@ -1,0 +1,6 @@
+dependencies {
+    api "io.vertx:vertx-core:_"
+    api "io.vertx:vertx-lang-kotlin:_"
+    api "io.vertx:vertx-lang-kotlin-coroutines:_"
+    api "io.vertx:vertx-service-discovery:_"
+}
