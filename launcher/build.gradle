@@ -1,0 +1,14 @@
+plugins {
+    id 'application'
+}
+
+run {
+    group = 'rsbox'
+    workingDir = rootProject.projectDir
+    mainClassName = "io.rsbox.launcher.Launcher"
+}
+
+dependencies {
+    implementation project(":common")
+    implementation project(":cache")
+}
