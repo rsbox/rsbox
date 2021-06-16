@@ -3,4 +3,6 @@ dependencies {
     implementation project(":cache")
     implementation project(":config")
     implementation project(":net")
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:_"
+    implementation "com.google.guava:guava:_"
 }

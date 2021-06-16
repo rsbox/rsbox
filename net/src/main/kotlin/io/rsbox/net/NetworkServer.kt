@@ -1,65 +1,91 @@
 package io.rsbox.net
 
+import io.netty.bootstrap.ServerBootstrap
+import io.netty.channel.ChannelFuture
+import io.netty.channel.ChannelOption
+import io.netty.channel.nio.NioEventLoopGroup
+import io.netty.channel.socket.nio.NioServerSocketChannel
 import io.rsbox.common.di.inject
 import io.rsbox.config.RSBoxConfig
-import io.vertx.core.net.NetServer
-import io.vertx.kotlin.coroutines.CoroutineVerticle
-import io.vertx.kotlin.servicediscovery.serviceDiscoveryOptionsOf
-import io.vertx.servicediscovery.ServiceDiscovery
-import io.vertx.servicediscovery.types.MessageSource
+import io.rsbox.net.pipeline.GameChannelInitializer
 import org.tinylog.kotlin.Logger
 import java.net.InetSocketAddress
+import kotlin.system.exitProcess
 
 /**
  * The networking server component which deals with the TCP input/output for the RSBox private server.
- *
- * @property server NetServer
  */
-class NetworkServer : CoroutineVerticle() {
+class NetworkServer {
 
     private val rsboxConfig: RSBoxConfig by inject()
 
-    lateinit var server: NetServer
-        private set
+    private val bootstrap = ServerBootstrap()
+    private val bossGroup = NioEventLoopGroup(1)
+    private val workerGroup = NioEventLoopGroup(2)
+    private val channelInitializer = GameChannelInitializer()
 
-    val id: String get() = deploymentID
-
-    val sessions = mutableSetOf<NetworkSession>()
-
-    val discovery by lazy {
-        ServiceDiscovery.create(vertx, serviceDiscoveryOptionsOf(name = "network-server"))
+    init {
+        /*
+         * Setup the server bootstrap
+         */
+        bootstrap
+            .group(bossGroup, workerGroup)
+            .childOption(ChannelOption.TCP_NODELAY, true)
+            .childOption(ChannelOption.SO_KEEPALIVE, true)
+            .channel(NioServerSocketChannel::class.java)
+            .childHandler(channelInitializer)
     }
 
-    override suspend fun start() {
-        this.server = vertx.createNetServer()
-            .connectHandler { socket ->
-                socket.writeHandlerID()
-                val session = NetworkSession(vertx, this, socket)
-                Logger.info("Connection established from remote: ${socket.remoteAddress()}.")
+    /**
+     * Starts the game networking server.
+     */
+    fun start() {
+        Logger.info("Preparing game networking server.")
 
-                val eventSource =
-                    MessageSource.createRecord("network-session-source", "network.event.${socket.writeHandlerID()}")
+        /**
+         * The address that we should attempt to bind the networking socket to.
+         * This is read from the configured values in rsbox.yml configuration file.
+         */
+        val bindAddress = InetSocketAddress(rsboxConfig.listenAddress, rsboxConfig.listenPort)
 
-                socket.handler(session::receive)
-                    .closeHandler {
-                        Logger.info("Connection closed from remote: ${socket.remoteAddress()}")
-                        session.close()
-                        this.sessions -= session
-                    }
-                    .exceptionHandler {
-                        it.printStackTrace()
-                        socket.close()
-                    }
-
-                this.sessions += session
+        this.bind(bindAddress).addListener { result ->
+            if(result.isSuccess) {
+                this.onBindSuccess(bindAddress)
+            } else {
+                this.onBindFailure(bindAddress, result.cause())
             }
-
-        this.server.listen(rsboxConfig.listenPort, rsboxConfig.listenAddress)
-        Logger.info("Listening for client connections on ${rsboxConfig.listenAddress}:${rsboxConfig.listenPort}")
+        }
     }
 
-    override suspend fun stop() {
-        this.server.close()
-        this.sessions.clear()
+    /**
+     * Shutsdown the game networking server.
+     */
+    fun shutdown() {
+        Logger.info("Shutting down game networking server.")
+
+        /*
+         * Terminate the boss and worker threads
+         */
+        bossGroup.shutdownGracefully()
+        workerGroup.shutdownGracefully()
+    }
+
+    /**
+     * Attempts to bind the networking server to a given address.
+     *
+     * @param address InetSocketAddress
+     */
+    private fun bind(address: InetSocketAddress): ChannelFuture {
+        return bootstrap.bind(address.address, address.port)
+    }
+
+    private fun onBindSuccess(address: InetSocketAddress) {
+        Logger.info("Listening for incoming connections on ${address.hostString}:${address.port}...")
+    }
+
+    private fun onBindFailure(address: InetSocketAddress, cause: Throwable) {
+        Logger.error("Failed to bind network server to ${address.hostString}:${address.port}. Terminating process.")
+        cause.printStackTrace()
+        exitProcess(0)
     }
 }

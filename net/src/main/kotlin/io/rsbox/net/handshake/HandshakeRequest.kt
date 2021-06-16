@@ -1,28 +1,49 @@
 package io.rsbox.net.handshake
 
 import io.netty.buffer.ByteBuf
-import io.rsbox.net.NetworkPacket
-import io.rsbox.net.NetworkSession
-import io.rsbox.net.core.PacketCodec
-import org.tinylog.kotlin.Logger
+import io.rsbox.common.di.inject
+import io.rsbox.config.RSBoxConfig
+import io.rsbox.net.ServerResponseType
+import io.rsbox.net.Session
+import io.rsbox.net.core.Message
+import io.rsbox.net.core.MessageCodec
 
-data class HandshakeRequest(
-    val type: HandshakeType,
-    val revision: Int
-) : NetworkPacket.Handshake() {
+class HandshakeRequest(val type: HandshakeType, val revision: Int) : Message {
 
-    override fun handle(session: NetworkSession) {
-        Logger.info("Got handshake: $type")
+    private val rsboxConfig: RSBoxConfig by inject()
+
+    override fun handle(session: Session) {
+        val serverRevision = rsboxConfig.revision
+
+        if(revision != serverRevision) {
+            session.writeAndClose(ServerResponseType.REVISION_MISMATCH)
+            return
+        }
+
+        when(type){
+            /*
+             * When the handshake is signaling JS5 protocol
+             */
+            HandshakeType.JS5 -> {
+                println("Switch to JS5 protocol")
+                session.writeAndFlush(ServerResponseType.ACCEPTABLE)
+            }
+
+            /*
+             * When the handshake is signaling LOGIN protocol
+             */
+            HandshakeType.LOGIN -> {
+                println("Switch to LOGIN protocol")
+                session.writeAndFlush(ServerResponseType.ACCEPTABLE)
+            }
+        }
     }
 
-    companion object : PacketCodec<HandshakeRequest> {
-
+    companion object : MessageCodec<HandshakeRequest> {
         override fun decode(buf: ByteBuf): HandshakeRequest {
-            buf.resetReaderIndex()
-
             val opcode = buf.readUnsignedByte().toInt()
             val revision = buf.readInt()
-            val handshakeType = HandshakeType.fromId(opcode)
+            val handshakeType = HandshakeType.fromOpcode(opcode)
 
             return HandshakeRequest(handshakeType, revision)
         }
