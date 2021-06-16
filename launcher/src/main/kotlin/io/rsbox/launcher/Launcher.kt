@@ -5,6 +5,7 @@ import io.guthix.js5.container.Js5Container
 import io.guthix.js5.container.Js5Store
 import io.guthix.js5.container.disk.Js5DiskStore
 import io.rsbox.cache.CacheModule
+import io.rsbox.cache.GameCache
 import io.rsbox.common.di.get
 import io.rsbox.common.di.inject
 import io.rsbox.config.ConfigModule
@@ -19,8 +20,7 @@ import java.io.File
 class Launcher {
 
     private val rsboxConfig: RSBoxConfig by inject()
-    private val cacheStore: Js5DiskStore by inject()
-    private val cache: Js5Cache by inject()
+    private val gameCache: GameCache by inject()
     private val engine: Engine by inject()
 
     fun launch() {
@@ -85,26 +85,8 @@ class Launcher {
     }
 
     private fun initGameCache() {
-        val cacheDir = File("data/cache/")
-
-        if(cacheDir.listFiles()!!.isEmpty()) {
-            throw IllegalStateException("No game cache files found. Copy OSRS cache files to 'data/cache/'.")
-        }
-
-        Logger.info("Found ${cacheStore.archiveCount} game cache archives.")
-
-        /*
-         * Validate the game cache.
-         */
-        Logger.info("Validating game cache files.")
-
-        val validator = cache.generateValidator(
-            includeWhirlpool = false,
-            includeSizes = false
-        )
-
-        val container = Js5Container(validator.encode())
-        cacheStore.write(Js5Store.MASTER_INDEX, Js5Store.MASTER_INDEX, data = container.encode())
+        Logger.info("Preparing to load game cache files...")
+        gameCache.load()
     }
 
     companion object {

@@ -10,4 +10,5 @@ import java.nio.file.Paths
 val CacheModule = module {
     single { Js5DiskStore.open(Paths.get("data/cache/")) } bind Js5Store::class
     single { Js5Cache(get()) }
+    single { GameCache() }
 }
