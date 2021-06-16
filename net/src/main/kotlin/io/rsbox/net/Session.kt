@@ -3,6 +3,7 @@ package io.rsbox.net
 import io.netty.channel.ChannelFuture
 import io.netty.channel.ChannelHandlerContext
 import io.rsbox.net.core.Message
+import io.rsbox.net.core.Protocol
 import io.rsbox.net.handshake.HandshakeProtocol
 import io.rsbox.net.pipeline.GameChannelDecoder
 import io.rsbox.net.pipeline.GameChannelEncoder
@@ -49,7 +50,7 @@ class Session(val ctx: ChannelHandlerContext) {
      * The current network protocol this session is using for processing inbound
      * and outbound packets.
      */
-    var protocol = HandshakeProtocol(this)
+    var protocol: Protocol = HandshakeProtocol(this)
 
     /**
      * A queue of messages which have been received inbound for this session but have
@@ -68,10 +69,6 @@ class Session(val ctx: ChannelHandlerContext) {
 
         p.addBefore("handler", "decoder", decoder)
         p.addBefore("decoder", "encoder", encoder)
-    }
-
-    internal fun onDisconnect() {
-        println("Connection lost")
     }
 
     fun close() {
@@ -108,6 +105,7 @@ class Session(val ctx: ChannelHandlerContext) {
 
     internal fun onError(cause: Throwable) {
         if(cause.stackTrace.isEmpty() || cause.stackTrace[0].methodName != "read0") {
+            cause.printStackTrace()
             Logger.error("An exception occurred in [session: $uuid] network thread.")
         }
 

@@ -4,7 +4,7 @@ enum class HandshakeType(val opcode: Int) {
 
     JS5(15),
 
-    LOGIN(18);
+    LOGIN(14);
 
     companion object {
 

@@ -7,6 +7,7 @@ import io.rsbox.net.ServerResponseType
 import io.rsbox.net.Session
 import io.rsbox.net.core.Message
 import io.rsbox.net.core.MessageCodec
+import io.rsbox.net.js5.JS5Protocol
 
 class HandshakeRequest(val type: HandshakeType, val revision: Int) : Message {
 
@@ -15,7 +16,7 @@ class HandshakeRequest(val type: HandshakeType, val revision: Int) : Message {
     override fun handle(session: Session) {
         val serverRevision = rsboxConfig.revision
 
-        if(revision != serverRevision) {
+        if(revision != serverRevision && revision != Int.MAX_VALUE) {
             session.writeAndClose(ServerResponseType.REVISION_MISMATCH)
             return
         }
@@ -25,7 +26,7 @@ class HandshakeRequest(val type: HandshakeType, val revision: Int) : Message {
              * When the handshake is signaling JS5 protocol
              */
             HandshakeType.JS5 -> {
-                println("Switch to JS5 protocol")
+                session.protocol = JS5Protocol(session)
                 session.writeAndFlush(ServerResponseType.ACCEPTABLE)
             }
 
@@ -42,8 +43,12 @@ class HandshakeRequest(val type: HandshakeType, val revision: Int) : Message {
     companion object : MessageCodec<HandshakeRequest> {
         override fun decode(buf: ByteBuf): HandshakeRequest {
             val opcode = buf.readUnsignedByte().toInt()
-            val revision = buf.readInt()
             val handshakeType = HandshakeType.fromOpcode(opcode)
+
+            val revision = when(handshakeType) {
+                HandshakeType.JS5 -> buf.readInt()
+                HandshakeType.LOGIN -> Int.MAX_VALUE
+            }
 
             return HandshakeRequest(handshakeType, revision)
         }

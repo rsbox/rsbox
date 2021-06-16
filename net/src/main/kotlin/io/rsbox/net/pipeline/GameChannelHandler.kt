@@ -17,7 +17,7 @@ class GameChannelHandler : ChannelInboundHandlerAdapter() {
         newSession.onConnect()
     }
 
-    override fun channelInactive(ctx: ChannelHandlerContext) = session.get().onDisconnect()
+    override fun channelInactive(ctx: ChannelHandlerContext) = session.get().close()
 
     override fun channelRead(ctx: ChannelHandlerContext, msg: Any) = session.get().receive(msg)
 
