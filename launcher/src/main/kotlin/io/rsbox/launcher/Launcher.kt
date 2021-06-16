@@ -24,6 +24,9 @@ class Launcher {
     private val engine: Engine by inject()
 
     fun launch() {
+        /*
+         * Launch RSBox
+         */
         Logger.info("Launching RSBox server...")
 
         /*

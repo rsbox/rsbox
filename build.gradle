@@ -19,5 +19,6 @@ allprojects {
         implementation "org.tinylog:tinylog-impl:_"
         implementation "io.insert-koin:koin-core:_"
         implementation "io.insert-koin:koin-core-ext:_"
+        implementation "ch.qos.logback:logback-classic:_"
     }
 }

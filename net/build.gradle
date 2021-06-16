@@ -1,4 +1,5 @@
 dependencies {
     implementation project(":common")
+    implementation project(":config")
     api project(":net:net-core")
 }
