@@ -5,4 +5,6 @@ dependencies {
     implementation project(":net")
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:_"
     implementation "com.google.guava:guava:_"
+    implementation "io.reactivex.rxjava3:rxjava:_"
+    implementation "io.reactivex.rxjava3:rxkotlin:_"
 }

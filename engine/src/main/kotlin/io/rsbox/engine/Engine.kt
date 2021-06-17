@@ -3,6 +3,9 @@ package io.rsbox.engine
 import com.google.common.util.concurrent.ThreadFactoryBuilder
 import io.rsbox.common.di.inject
 import io.rsbox.engine.coroutine.GameCoroutineScope
+import io.rsbox.engine.event.EventBus
+import io.rsbox.engine.event.impl.EngineStartEvent
+import io.rsbox.engine.event.on_event
 import io.rsbox.net.NetworkServer
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.asCoroutineDispatcher
@@ -36,25 +39,42 @@ class Engine  {
     var state: EngineState = EngineState.SHUTDOWN
         private set
 
+    fun test() {
+
+        on_event<EngineStartEvent> { event ->
+            Logger.info("Received engine start event. Canceling it bc its time for bed.")
+        }
+
+        on_event<EngineStartEvent> { event ->
+            Logger.info("Does this still fire")
+            event.cancel()
+        }
+    }
+
     fun start() {
         if(state == EngineState.RUNNING) {
             throw IllegalStateException("Game engine is already running.")
         }
 
+        this.test()
+
         Logger.info("Starting RSBox game engine...")
+
         state = EngineState.RUNNING
 
-        /*
-         * Start the networking server.
-         */
-        networkServer.start()
+        EventBus.fire(EngineStartEvent(this)) {
+            /*
+             * Start the networking server
+             */
+            networkServer.start()
 
-        /*
-         * Start the game loop.
-         */
-        gameCoroutineScope.start(CYCLE_MILLIS)
+            /*
+             * Start the game loop.
+             */
+            gameCoroutineScope.start(CYCLE_MILLIS)
 
-        Logger.info("Server has completed startup successfully.")
+            Logger.info("Server has completed startup successfully.")
+        }
     }
 
     fun shutdown() {

@@ -21,4 +21,8 @@ allprojects {
         implementation "io.insert-koin:koin-core-ext:_"
         implementation "ch.qos.logback:logback-classic:_"
     }
+
+    compileKotlin {
+        kotlinOptions.freeCompilerArgs = ['-Xuse-experimental=kotlinx.coroutines.ObsoleteCoroutinesApi']
+    }
 }
