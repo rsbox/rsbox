@@ -1,4 +1,4 @@
-package io.rsbox.net.handshake
+package io.rsbox.net.login
 
 import io.netty.buffer.ByteBuf
 import io.rsbox.net.ServerResponseType
@@ -8,7 +8,7 @@ import io.rsbox.net.core.MessageCodec
 import io.rsbox.net.core.MessageCodecRegistry
 import io.rsbox.net.core.Protocol
 
-class HandshakeProtocol(override val session: Session) : Protocol {
+class LoginProtocol(override val session: Session) : Protocol {
 
     override val inbound = MessageCodecRegistry(this)
     override val outbound = MessageCodecRegistry(this)
@@ -17,9 +17,7 @@ class HandshakeProtocol(override val session: Session) : Protocol {
         /*
          * Inbound
          */
-        inbound[14] = HandshakeRequest.Login
-        inbound[15] = HandshakeRequest.JS5
-
+        inbound[-255] = LoginRequest
 
         /*
          * Outbound
@@ -28,15 +26,14 @@ class HandshakeProtocol(override val session: Session) : Protocol {
     }
 
     override fun ingress(session: Session, buf: ByteBuf, out: MutableList<Any>) {
-        val opcode = buf.readUnsignedByte().toInt()
-        val codec = inbound[opcode]
-        val msg = codec.decode(session, buf)!!
+        val codec = inbound[-255]
+        val msg = codec.decode(session, buf) ?: return
         out.add(msg)
     }
 
     @Suppress("UNCHECKED_CAST")
     override fun egress(session: Session, msg: Message, out: ByteBuf) {
-        val codec: MessageCodec<HandshakeRequest> = outbound[-255] as MessageCodec<HandshakeRequest>
-        codec.encode(session, out, msg as HandshakeRequest)
+        val codec = outbound[-255] as MessageCodec<ServerResponseType>
+        codec.encode(session, out, msg as ServerResponseType)
     }
 }

@@ -1,6 +1,7 @@
 package io.rsbox.net.js5
 
 import io.netty.buffer.ByteBuf
+import io.rsbox.net.Session
 import io.rsbox.net.core.Message
 import io.rsbox.net.core.MessageCodec
 
@@ -37,7 +38,7 @@ class JS5Response(
     }
 
     companion object : MessageCodec<JS5Response> {
-        override fun encode(out: ByteBuf, msg: JS5Response) {
+        override fun encode(session: Session, out: ByteBuf, msg: JS5Response) {
             out.writeByte(msg.archive)
             out.writeShort(msg.group)
             out.writeByte(msg.compressionType)

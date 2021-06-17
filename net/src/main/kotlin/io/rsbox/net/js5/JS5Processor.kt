@@ -60,7 +60,7 @@ object JS5Processor {
 
         allResponsesCached = true
 
-        Logger.info("${CACHED_RESPONSES.size} JS5 responses have been successfully cached into memory.")
+        Logger.info("${CACHED_RESPONSES.values.size} JS5 responses have been successfully cached into memory.")
     }
 
     private fun createResponse(archive: Int, group: Int): JS5Response {

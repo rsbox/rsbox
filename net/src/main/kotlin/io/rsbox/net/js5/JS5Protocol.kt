@@ -21,12 +21,12 @@ class JS5Protocol(override val session: Session) : Protocol {
 
     override fun ingress(session: Session, buf: ByteBuf, out: MutableList<Any>) {
         val codec = inbound[-255]
-        val msg = codec.decode(buf) ?: return
+        val msg = codec.decode(session, buf) ?: return
         out.add(msg)
     }
 
     override fun egress(session: Session, msg: Message, out: ByteBuf) {
         val codec = if(msg is ServerResponseType) outbound[-256] else outbound[-255]
-        codec.encode(out, msg)
+        codec.encode(session, out, msg)
     }
 }

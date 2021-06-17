@@ -2,9 +2,11 @@ package io.rsbox.net
 
 import io.netty.channel.ChannelFuture
 import io.netty.channel.ChannelHandlerContext
+import io.rsbox.common.di.inject
 import io.rsbox.net.core.Message
 import io.rsbox.net.core.Protocol
 import io.rsbox.net.handshake.HandshakeProtocol
+import io.rsbox.net.login.LoginDecoder
 import io.rsbox.net.pipeline.GameChannelDecoder
 import io.rsbox.net.pipeline.GameChannelEncoder
 import org.tinylog.kotlin.Logger
@@ -17,6 +19,8 @@ import java.util.*
  * @constructor
  */
 class Session(val ctx: ChannelHandlerContext) {
+
+    private val networkServer: NetworkServer by inject()
 
     /**
      * The netty IO socket channel of this session.
@@ -58,7 +62,18 @@ class Session(val ctx: ChannelHandlerContext) {
      */
     private val messageQueue = ArrayDeque<Message>()
 
+    /**
+     * The login decoder instance currently in use. If this field is null,
+     * the current protocol is not doing a login.
+     */
+    internal var loginDecoder: LoginDecoder? = null
+
     internal fun onConnect() {
+        /*
+         * Register this session with the network server.
+         */
+        networkServer.sessions.add(this)
+
         /*
          * Add the final channel encoder and decoder pipelines for this session's
          * network connection.
@@ -73,6 +88,7 @@ class Session(val ctx: ChannelHandlerContext) {
 
     fun close() {
         channel.close()
+        networkServer.sessions.remove(this)
     }
 
     internal fun receive(msg: Any) {

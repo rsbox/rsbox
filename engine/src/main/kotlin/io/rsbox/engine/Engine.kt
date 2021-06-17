@@ -93,7 +93,6 @@ class Engine  {
      * Executes all of the logic for each cycle of the game engine.
      */
     private suspend fun cycle() {
-
     }
 
     companion object {

@@ -33,7 +33,7 @@ enum class ServerResponseType(val id: Int) : Message {
     INCORRECT_AUTH(57);
 
     companion object : MessageCodec<ServerResponseType> {
-        override fun encode(out: ByteBuf, msg: ServerResponseType) {
+        override fun encode(session: Session, out: ByteBuf, msg: ServerResponseType) {
             out.writeByte(msg.id)
         }
     }

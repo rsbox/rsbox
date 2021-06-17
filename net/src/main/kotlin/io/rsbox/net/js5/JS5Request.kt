@@ -19,7 +19,7 @@ class JS5Request(val archive: Int, val group: Int, val priority: Boolean) : Mess
         private const val GAME_LOADING = 3
         private const val GAME_READY = 6
 
-        override fun decode(buf: ByteBuf): JS5Request? {
+        override fun decode(session: Session, buf: ByteBuf): JS5Request? {
             buf.markReaderIndex()
 
             when(val requestType = buf.readByte().toInt()) {

@@ -24,6 +24,8 @@ class NetworkServer {
     private val workerGroup = NioEventLoopGroup(2)
     private val channelInitializer = GameChannelInitializer()
 
+    val sessions = mutableListOf<Session>()
+
     init {
         /*
          * Setup the server bootstrap
