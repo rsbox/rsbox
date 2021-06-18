@@ -1,13 +1,11 @@
 package io.rsbox.launcher
 
-import io.guthix.js5.Js5Cache
-import io.guthix.js5.container.Js5Container
-import io.guthix.js5.container.Js5Store
-import io.guthix.js5.container.disk.Js5DiskStore
 import io.rsbox.cache.CacheModule
 import io.rsbox.cache.GameCache
+import io.rsbox.common.CommonModule
 import io.rsbox.common.di.get
 import io.rsbox.common.di.inject
+import io.rsbox.common.rsa.RSA
 import io.rsbox.config.ConfigModule
 import io.rsbox.config.RSBoxConfig
 import io.rsbox.engine.Engine
@@ -16,12 +14,14 @@ import io.rsbox.net.NetModule
 import org.koin.core.context.startKoin
 import org.tinylog.kotlin.Logger
 import java.io.File
+import java.math.BigInteger
 
 class Launcher {
 
     private val rsboxConfig: RSBoxConfig by inject()
     private val gameCache: GameCache by inject()
     private val engine: Engine by inject()
+    private val rsa: RSA by inject()
 
     fun launch() {
         /*
@@ -43,6 +43,11 @@ class Launcher {
          * Init game cache files.
          */
         this.initGameCache()
+
+        /*
+         * Init RSA key files
+         */
+        this.initRSA()
 
         /*
          * Start the game engine.
@@ -89,6 +94,11 @@ class Launcher {
         gameCache.load()
     }
 
+    private fun initRSA() {
+        Logger.info("Loading RSA public and private keys.")
+        rsa.init()
+    }
+
     companion object {
 
         private fun initDi() {
@@ -98,7 +108,8 @@ class Launcher {
                     CacheModule,
                     ConfigModule,
                     EngineModule,
-                    NetModule
+                    NetModule,
+                    CommonModule
                 )
             }
         }
