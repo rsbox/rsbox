@@ -9,7 +9,4 @@ include ':common'
 include ':launcher'
 include ':engine'
 include ':config'
-include ':net'
-include ':net:core'
-
-project(':net:core').name = 'net-core'
+include ':event'

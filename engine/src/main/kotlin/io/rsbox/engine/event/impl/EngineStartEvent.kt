@@ -1,7 +1,7 @@
 package io.rsbox.engine.event.impl
 
 import io.rsbox.engine.Engine
-import io.rsbox.engine.event.Event
+import io.rsbox.event.Event
 import org.tinylog.kotlin.Logger
 
 class EngineStartEvent(val engine: Engine) : Event(isCancellable = true) {

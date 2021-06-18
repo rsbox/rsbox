@@ -10,11 +10,10 @@ import io.rsbox.config.ConfigModule
 import io.rsbox.config.RSBoxConfig
 import io.rsbox.engine.Engine
 import io.rsbox.engine.EngineModule
-import io.rsbox.net.NetModule
+import io.rsbox.engine.net.NetModule
 import org.koin.core.context.startKoin
 import org.tinylog.kotlin.Logger
 import java.io.File
-import java.math.BigInteger
 
 class Launcher {
 
