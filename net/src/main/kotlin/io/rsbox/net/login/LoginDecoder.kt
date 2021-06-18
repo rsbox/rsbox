@@ -284,33 +284,33 @@ class LoginDecoder(private val session: Session) {
          */
 
         val clientCrcs = IntArray(21)
-        val serverCrcs = gameCache.crcs
+        val serverCrcs = gameCache.crcs.toIntArray()
 
         /*
          * The order of the archives is specific to each client revision and must be changed
          * when upgrade the server's OSRS revision.
          */
-        clientCrcs[1] = xteaBuf.readIntIME()
-        clientCrcs[12] = xteaBuf.readIntME()
+        clientCrcs[1] = xteaBuf.readIntME()
+        clientCrcs[12] = xteaBuf.readIntIME()
         clientCrcs[5] = xteaBuf.readInt()
         clientCrcs[16] = xteaBuf.readIntME()
         clientCrcs[4] = xteaBuf.readIntLE()
-        clientCrcs[7] = xteaBuf.readIntME()
-        clientCrcs[11] = xteaBuf.readIntME()
+        clientCrcs[7] = xteaBuf.readIntIME()
+        clientCrcs[11] = xteaBuf.readIntIME()
         clientCrcs[3] = xteaBuf.readIntLE()
-        clientCrcs[10] = xteaBuf.readIntIME()
+        clientCrcs[10] = xteaBuf.readIntME()
         clientCrcs[0] = xteaBuf.readInt()
-        clientCrcs[14] = xteaBuf.readIntME()
-        clientCrcs[6] = xteaBuf.readIntIME()
+        clientCrcs[14] = xteaBuf.readIntIME()
+        clientCrcs[6] = xteaBuf.readIntME()
         clientCrcs[2] = xteaBuf.readInt()
         clientCrcs[19] = xteaBuf.readInt()
         clientCrcs[18] = xteaBuf.readInt()
-        clientCrcs[17] = xteaBuf.readIntIME()
+        clientCrcs[17] = xteaBuf.readIntME()
         clientCrcs[13] = xteaBuf.readIntLE()
-        clientCrcs[9] = xteaBuf.readIntME()
+        clientCrcs[9] = xteaBuf.readIntIME()
         clientCrcs[15] = xteaBuf.readIntLE()
         clientCrcs[8] = xteaBuf.readInt()
-        clientCrcs[20] = xteaBuf.readIntIME()
+        clientCrcs[20] = xteaBuf.readIntME()
 
         /*
          * Verify the client CRC's match the server's archive crc's
@@ -318,7 +318,14 @@ class LoginDecoder(private val session: Session) {
         for(i in clientCrcs.indices) {
             val clientCrc = clientCrcs[i]
             val serverCrc = serverCrcs[i]
-            if(clientCrc > 0 && clientCrc != serverCrc) {
+            if(clientCrc != serverCrc) {
+                /*
+                 * Skip mismatch for archive16
+                 */
+                if(i == 16) {
+                    continue
+                }
+
                 out = LoginRequest.Error(ServerResponseType.REVISION_MISMATCH)
                 return
             }
