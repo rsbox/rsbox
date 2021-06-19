@@ -13,7 +13,7 @@ sealed class LoginRequest : Message {
     class Normal(
         val session: Session,
         val username: String,
-        val password: String,
+        val password: String?,
         val authCode: Int?,
         val isResizableMode: Boolean,
         val clientWidth: Int,

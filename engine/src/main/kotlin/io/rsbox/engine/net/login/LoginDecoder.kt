@@ -12,6 +12,7 @@ import io.rsbox.config.RSBoxConfig
 import io.rsbox.engine.net.ServerResponseType
 import io.rsbox.engine.net.Session
 import java.math.BigInteger
+import kotlin.math.max
 
 class LoginDecoder(private val session: Session) {
 
@@ -306,7 +307,24 @@ class LoginDecoder(private val session: Session) {
             return
         }
 
-        out = LoginRequest.Error(ServerResponseType.ACCOUNT_BANNED)
+        out = LoginRequest.Normal(
+            session = session,
+            username = username,
+            password = password,
+            authCode = authCode,
+            isResizableMode = isResizableMode,
+            clientWidth = clientWidth,
+            clientHeight = clientHeight,
+            operatingSystem = operatingSystem,
+            x64 = is64Bit == 1,
+            osVersion = osVersion,
+            javaVendor = javaVendor,
+            javaMajorVersion = javaMajorVersion,
+            javaMinorVersion = javaMinorVersion,
+            javaPatchVersion = javaPatchVersion,
+            maxMemory = maxMemory,
+            cpuCount = cpuCount
+        )
     }
 
     private fun retry() {

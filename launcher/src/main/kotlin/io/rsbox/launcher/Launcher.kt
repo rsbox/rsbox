@@ -90,7 +90,7 @@ class Launcher {
 
     private fun initGameCache() {
         Logger.info("Preparing to load game cache files...")
-        gameCache.load()
+        gameCache.open(File("data/cache/"))
     }
 
     private fun initRSA() {

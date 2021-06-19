@@ -4,23 +4,20 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder
 import io.rsbox.engine.net.login.LoginRequest
 import io.rsbox.engine.net.service.EngineService
 import io.rsbox.engine.net.service.Service
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.asCoroutineDispatcher
 import org.tinylog.kotlin.Logger
-import java.util.concurrent.ConcurrentLinkedDeque
 import java.util.concurrent.Executors
-import kotlin.coroutines.CoroutineContext
+import java.util.concurrent.LinkedBlockingQueue
 
 @EngineService
 class LoginService : Service {
 
-    val loginCoroutineScope = CoroutineScope(Executors.newFixedThreadPool(4, ThreadFactoryBuilder()
-        .setNameFormat("login-thread")
-        .setDaemon(false)
+    private val loginExecutor = Executors.newFixedThreadPool(LOGIN_THREADS, ThreadFactoryBuilder()
+        .setNameFormat("login-worker")
+        .setUncaughtExceptionHandler { t, e -> Logger.error(e) { "An error occured"} }
         .build()
-    ).asCoroutineDispatcher())
+    )
 
-    val normalLoginQueue = ConcurrentLinkedDeque<LoginRequest.Normal>()
+    val normalLoginQueue = LinkedBlockingQueue<LoginRequest.Normal>()
 
     override fun onEnabled() {
         this.start()
@@ -29,6 +26,30 @@ class LoginService : Service {
     private fun start() {
         Logger.info("Starting login service...")
 
+        repeat(LOGIN_THREADS) {
+            loginExecutor.execute(LoginWorker(this))
+        }
 
+        Logger.info("Login processing workers running on $LOGIN_THREADS threads.")
+    }
+
+    /**
+     * Represents a single login request worker which processes the login request.
+     *
+     * @property service LoginService
+     * @constructor
+     */
+    private class LoginWorker(private val service: LoginService) : Runnable {
+
+        override fun run() {
+            while(true) {
+                val loginRequest = service.normalLoginQueue.take()
+                println("Received login request for: ${loginRequest.username}")
+            }
+        }
+    }
+
+    companion object {
+        private const val LOGIN_THREADS = 4
     }
 }

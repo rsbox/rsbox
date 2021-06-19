@@ -15,6 +15,7 @@ allprojects {
 
     dependencies {
         implementation "org.jetbrains.kotlin:kotlin-stdlib:_"
+        implementation "org.jetbrains.kotlin:kotlin-reflect:_"
         implementation "org.tinylog:tinylog-api-kotlin:_"
         implementation "org.tinylog:tinylog-impl:_"
         implementation "io.insert-koin:koin-core:_"

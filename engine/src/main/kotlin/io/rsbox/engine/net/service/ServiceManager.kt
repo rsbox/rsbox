@@ -22,31 +22,22 @@ class ServiceManager {
     /**
      * Scan for any service annotated classes and load them into this service manager instance.
      */
+    @Suppress("UNCHECKED_CAST")
     internal fun init() {
         Logger.info("Scanning for engine services...")
 
         val result = ClassGraph().enableAllInfo().scan().getClassesWithAnnotation(EngineService::class.java.name)
         result.forEach { cls ->
             if(cls.implementsInterface(Service::class.java.name) || cls.implementsInterface(CyclingService::class.java.name)) {
-                this.loadService(cls.loadClass().kotlin)
+                val klass = cls.loadClass() as Class<Service>
+                val service = cls.loadClass().getDeclaredConstructor().newInstance() as Service
+                services[klass.kotlin] = service
+                service.onEnabled()
             } else {
                 return@forEach
             }
         }
 
         Logger.info("Successfully loaded ${services.size} engine services.")
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    private fun <T : Any> loadService(type: KClass<T>) {
-        Logger.info("Found engine service: '${type::class.simpleName}'.")
-
-        val service = type::class.java.getDeclaredConstructor().newInstance() as T
-        services[type as KClass<out Service>] = service as Service
-
-        /*
-         * Invoke the instance being enabled.
-         */
-        service.onEnabled()
     }
 }
