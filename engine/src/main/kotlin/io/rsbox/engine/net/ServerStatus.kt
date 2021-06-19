@@ -1,10 +1,6 @@
 package io.rsbox.engine.net
 
-import io.netty.buffer.ByteBuf
-import io.rsbox.engine.net.core.Message
-import io.rsbox.engine.net.core.MessageCodec
-
-enum class ServerResponseType(val id: Int) : Message {
+enum class ServerStatus(val id: Int) : Message {
     ACCEPTABLE(0),
     LOGGED_IN(2),
     INVALID_CREDENTIALS(3),
@@ -31,10 +27,4 @@ enum class ServerResponseType(val id: Int) : Message {
     VOTE_TO_PLAY(38),
     REQUIRE_AUTH(56),
     INCORRECT_AUTH(57);
-
-    companion object : MessageCodec<ServerResponseType> {
-        override fun encode(session: Session, out: ByteBuf, msg: ServerResponseType) {
-            out.writeByte(msg.id)
-        }
-    }
 }

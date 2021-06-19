@@ -1,42 +1,46 @@
 package io.rsbox.engine.net.handshake
 
 import io.netty.buffer.ByteBuf
-import io.rsbox.engine.net.ServerResponseType
-import io.rsbox.engine.net.Session
-import io.rsbox.engine.net.core.Message
-import io.rsbox.engine.net.core.MessageCodec
-import io.rsbox.engine.net.core.MessageCodecRegistry
-import io.rsbox.engine.net.core.Protocol
+import io.rsbox.common.di.inject
+import io.rsbox.config.RSBoxConfig
+import io.rsbox.engine.net.*
+import io.rsbox.engine.net.js5.JS5Protocol
 
 class HandshakeProtocol(override val session: Session) : Protocol {
 
-    override val inbound = MessageCodecRegistry(this)
-    override val outbound = MessageCodecRegistry(this)
+    private val config: RSBoxConfig by inject()
 
-    init {
-        /*
-         * Inbound
-         */
-        inbound[14] = HandshakeRequest.Login
-        inbound[15] = HandshakeRequest.JS5
+    private val serverRevision = config.revision
 
-
-        /*
-         * Outbound
-         */
-        outbound[-255] = ServerResponseType
-    }
-
-    override fun ingress(session: Session, buf: ByteBuf, out: MutableList<Any>) {
+    override fun decode(buf: ByteBuf, out: MutableList<Any>) {
         val opcode = buf.readUnsignedByte().toInt()
-        val codec = inbound[opcode]
-        val msg = codec.decode(session, buf)!!
-        out.add(msg)
+        when(HandshakeType.fromOpcode(opcode)) {
+            HandshakeType.JS5 -> {
+                val revision = buf.readInt()
+                if(serverRevision != revision) {
+                    session.writeAndClose(ServerStatus.REVISION_MISMATCH)
+                    return
+                }
+
+                out.add(HandshakeRequest.JS5())
+            }
+
+            HandshakeType.LOGIN -> out.add(HandshakeRequest.Login())
+        }
     }
 
-    @Suppress("UNCHECKED_CAST")
-    override fun egress(session: Session, msg: Message, out: ByteBuf) {
-        val codec: MessageCodec<HandshakeRequest> = outbound[-255] as MessageCodec<HandshakeRequest>
-        codec.encode(session, out, msg as HandshakeRequest)
+    override fun encode(message: Message, out: ByteBuf) {
+        if(message !is ServerStatus) return
+        out.writeByte(message.id)
+    }
+
+    override fun handle(session: Session, message: Message) {
+        if(message !is HandshakeRequest) return
+        when(message) {
+            is HandshakeRequest.JS5 -> {
+                session.writeAndFlush(ServerStatus.ACCEPTABLE)
+                session.protocol.set(JS5Protocol(session))
+            }
+        }
     }
 }

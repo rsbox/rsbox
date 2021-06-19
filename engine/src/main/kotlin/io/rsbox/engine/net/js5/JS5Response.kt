@@ -1,18 +1,14 @@
 package io.rsbox.engine.net.js5
 
-import io.netty.buffer.ByteBuf
-import io.rsbox.engine.net.Session
-import io.rsbox.engine.net.core.Message
-import io.rsbox.engine.net.core.MessageCodec
+import io.rsbox.engine.net.Message
 
-class JS5Response(
+data class JS5Response(
     val archive: Int,
     val group: Int,
     val compressionType: Int,
     val compressionLength: Int,
     val data: ByteArray
 ) : Message {
-
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
@@ -35,21 +31,5 @@ class JS5Response(
         result = 31 * result + compressionLength
         result = 31 * result + data.contentHashCode()
         return result
-    }
-
-    companion object : MessageCodec<JS5Response> {
-        override fun encode(session: Session, out: ByteBuf, msg: JS5Response) {
-            out.writeByte(msg.archive)
-            out.writeShort(msg.group)
-            out.writeByte(msg.compressionType)
-            out.writeInt(msg.compressionLength)
-
-            msg.data.forEach { byte ->
-                if(out.writerIndex() % 512 == 0) {
-                    out.writeByte(-1)
-                }
-                out.writeByte(byte.toInt())
-            }
-        }
     }
 }

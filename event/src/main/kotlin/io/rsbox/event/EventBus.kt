@@ -17,7 +17,6 @@ object EventBus {
 
         action(event)
     }
-
 }
 
 @Suppress("FunctionName")

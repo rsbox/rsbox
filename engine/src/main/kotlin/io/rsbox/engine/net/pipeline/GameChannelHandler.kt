@@ -1,13 +1,16 @@
 package io.rsbox.engine.net.pipeline
 
-import io.netty.channel.ChannelHandler
 import io.netty.channel.ChannelHandlerContext
 import io.netty.channel.ChannelInboundHandlerAdapter
+import io.rsbox.common.di.inject
+import io.rsbox.engine.net.Message
+import io.rsbox.engine.net.NetworkServer
 import io.rsbox.engine.net.Session
 import java.util.concurrent.atomic.AtomicReference
 
-@ChannelHandler.Sharable
 class GameChannelHandler : ChannelInboundHandlerAdapter() {
+
+    private val networkServer: NetworkServer by inject()
 
     private val session = AtomicReference<Session>(null)
 
@@ -17,18 +20,17 @@ class GameChannelHandler : ChannelInboundHandlerAdapter() {
             return
         }
 
-        newSession.onConnect()
+        networkServer.sessions.add(newSession)
+        newSession.connect()
     }
 
-    override fun channelInactive(ctx: ChannelHandlerContext) = session.get().close()
+    override fun channelInactive(ctx: ChannelHandlerContext) = session.get().disconnect()
 
-    override fun channelRead(ctx: ChannelHandlerContext, msg: Any?) {
-        if(msg == null) {
-            return
-        }
+    override fun channelRead(ctx: ChannelHandlerContext, msg: Any) {
+         if(msg !is Message) return
         session.get().receive(msg)
     }
 
-    override fun exceptionCaught(ctx: ChannelHandlerContext, cause: Throwable) = session.get().onError(cause)
+    override fun exceptionCaught(ctx: ChannelHandlerContext, cause: Throwable) = session.get().error(cause)
 
 }

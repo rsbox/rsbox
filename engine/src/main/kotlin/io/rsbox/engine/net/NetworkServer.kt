@@ -1,7 +1,6 @@
 package io.rsbox.engine.net
 
 import io.netty.bootstrap.ServerBootstrap
-import io.netty.channel.ChannelFuture
 import io.netty.channel.ChannelOption
 import io.netty.channel.nio.NioEventLoopGroup
 import io.netty.channel.socket.nio.NioServerSocketChannel
@@ -12,12 +11,9 @@ import org.tinylog.kotlin.Logger
 import java.net.InetSocketAddress
 import kotlin.system.exitProcess
 
-/**
- * The networking server component which deals with the TCP input/output for the RSBox private server.
- */
 class NetworkServer {
 
-    private val rsboxConfig: RSBoxConfig by inject()
+    private val config: RSBoxConfig by inject()
 
     private val bootstrap = ServerBootstrap()
     private val bossGroup = NioEventLoopGroup(1)
@@ -27,58 +23,35 @@ class NetworkServer {
     val sessions = mutableListOf<Session>()
 
     init {
-        /*
-         * Setup the server bootstrap
-         */
-        bootstrap
-            .group(bossGroup, workerGroup)
-            .childOption(ChannelOption.TCP_NODELAY, true)
-            .childOption(ChannelOption.SO_KEEPALIVE, true)
+        bootstrap.group(bossGroup, workerGroup)
             .channel(NioServerSocketChannel::class.java)
+            .childOption(ChannelOption.SO_KEEPALIVE, true)
+            .childOption(ChannelOption.TCP_NODELAY, true)
             .childHandler(channelInitializer)
     }
 
-    /**
-     * Starts the game networking server.
-     */
     fun start() {
-        Logger.info("Preparing game networking server.")
-
-        /**
-         * The address that we should attempt to bind the networking socket to.
-         * This is read from the configured values in rsbox.yml configuration file.
-         */
-        val bindAddress = InetSocketAddress(rsboxConfig.listenAddress, rsboxConfig.listenPort)
-
-        this.bind(bindAddress).addListener { result ->
-            if(result.isSuccess) {
-                this.onBindSuccess(bindAddress)
-            } else {
-                this.onBindFailure(bindAddress, result.cause())
-            }
-        }
-    }
-
-    /**
-     * Shutsdown the game networking server.
-     */
-    fun shutdown() {
-        Logger.info("Shutting down game networking server.")
+        Logger.info("Starting engine networking server...")
 
         /*
-         * Terminate the boss and worker threads
+         * Bind the network server to the configured listen address and port.
          */
-        bossGroup.shutdownGracefully()
-        workerGroup.shutdownGracefully()
+        val address = InetSocketAddress(config.listenAddress, config.listenPort)
+        this.bind(address)
     }
 
-    /**
-     * Attempts to bind the networking server to a given address.
-     *
-     * @param address InetSocketAddress
-     */
-    private fun bind(address: InetSocketAddress): ChannelFuture {
-        return bootstrap.bind(address.address, address.port)
+    fun shutdown() {
+        Logger.info("Shutting down engine networking server...")
+    }
+
+    private fun bind(address: InetSocketAddress) {
+        bootstrap.bind(address).addListener { result ->
+            if(result.isSuccess) {
+                this.onBindSuccess(address)
+            } else {
+                this.onBindFailure(address, result.cause())
+            }
+        }
     }
 
     private fun onBindSuccess(address: InetSocketAddress) {
@@ -86,8 +59,7 @@ class NetworkServer {
     }
 
     private fun onBindFailure(address: InetSocketAddress, cause: Throwable) {
-        Logger.error("Failed to bind network server to ${address.hostString}:${address.port}. Terminating process.")
-        cause.printStackTrace()
+        Logger.error(cause) { "Failed to bind socket to ${address.hostString}:${address.port}" }
         exitProcess(0)
     }
 }
