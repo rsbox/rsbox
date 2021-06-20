@@ -1,6 +1,6 @@
 package io.rsbox.engine.service
 
-import io.rsbox.engine.service.impl.LoginService
+import io.rsbox.engine.service.login.LoginService
 import org.tinylog.kotlin.Logger
 import kotlin.reflect.KClass
 

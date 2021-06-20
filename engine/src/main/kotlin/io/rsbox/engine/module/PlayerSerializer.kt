@@ -4,6 +4,7 @@ import com.uchuhimo.konf.Config
 import com.uchuhimo.konf.ConfigSpec
 import com.uchuhimo.konf.source.json.toJson
 import io.rsbox.common.di.inject
+import io.rsbox.common.hash.SHA256
 import io.rsbox.config.RSBoxConfig
 import io.rsbox.engine.model.Tile
 import io.rsbox.engine.model.entity.Client
@@ -13,14 +14,13 @@ import org.tinylog.kotlin.Logger
 import java.io.File
 import java.nio.file.Paths
 import java.security.MessageDigest
+import kotlin.math.min
 
 object PlayerSerializer {
 
     private val config: RSBoxConfig by inject()
 
     private val playerSaveDirectory = Paths.get("data/saves/")
-
-    private val digest = MessageDigest.getInstance("SHA-256")
     private val defaultHomeTile = Tile(config.homeLocationX, config.homeLocationY, config.homeLocationLevel)
 
     /**
@@ -37,7 +37,7 @@ object PlayerSerializer {
 
         client.player = player
         player.username = request.username.sanitize()
-        player.password = request.password!!.sha256()
+        player.password = SHA256.hash(request.password!!)
         player.displayName = request.username.sanitize()
         player.homeTile = defaultHomeTile
         player.tile = defaultHomeTile
@@ -88,26 +88,17 @@ object PlayerSerializer {
         return player
     }
 
-    fun hasSave(player: Player): Boolean {
-        val saveFileName = player.username.sanitize() + ".json"
+    fun hasSave(username: String): Boolean {
+        val saveFileName = username.sanitize().replace(" ", "_") + ".json"
         val saveFile = playerSaveDirectory.resolve(saveFileName)
         return saveFile.toFile().exists()
     }
 
     private fun String.sanitize(): String {
-        var result = this.substring(12)
+        var result = this.substring(0, min(this.length, 12))
         val regex = Regex("[^A-Za-z0-9 ]")
         result = regex.replace(result, "")
         return result
-    }
-
-    private fun String.sha256(): String {
-        val encodedHash = digest.digest(this.toByteArray(Charsets.UTF_8))
-        return encodedHash.toHexString()
-    }
-
-    private fun ByteArray.toHexString(): String {
-        return this.joinToString { "%02x".format(it) }
     }
 
     private object PlayerSpec : ConfigSpec("player") {

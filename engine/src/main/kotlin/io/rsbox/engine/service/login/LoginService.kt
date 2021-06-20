@@ -1,4 +1,4 @@
-package io.rsbox.engine.service.impl
+package io.rsbox.engine.service.login
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder
 import io.rsbox.engine.net.login.LoginRequest
@@ -28,7 +28,7 @@ class LoginService : Service {
             executor.execute {
                 while(true) {
                     val loginRequest = loginRequestQueue.take()
-                    println("Received login request.")
+                    LoginProcessor.processLoginRequest(loginRequest)
                 }
             }
         }
