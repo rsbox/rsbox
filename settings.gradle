@@ -10,4 +10,11 @@ include ':launcher'
 include ':engine'
 include ':config'
 include ':event'
-include ':console'
+include ':content'
+include ':api'
+
+/*
+ * RSBOX CONTENT MODULES
+ */
+
+include ':content:core'

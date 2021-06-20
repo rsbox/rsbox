@@ -3,9 +3,11 @@ package io.rsbox.engine.service.login
 import io.rsbox.common.di.inject
 import io.rsbox.common.hash.SHA256
 import io.rsbox.config.RSBoxConfig
+import io.rsbox.engine.event.PlayerLoginEvent
 import io.rsbox.engine.module.PlayerSerializer
 import io.rsbox.engine.net.ServerStatus
 import io.rsbox.engine.net.login.LoginRequest
+import io.rsbox.event.fire_event
 import org.tinylog.kotlin.Logger
 
 object LoginProcessor {
@@ -38,8 +40,9 @@ object LoginProcessor {
             /*
              * Login successful.
              */
-            Logger.info("Login request successful for [username: ${request.username}] with ip [address: ${request.session.remoteAddress}].")
-            session.writeAndFlush(ServerStatus.SERVER_UPDATE)
+            fire_event(PlayerLoginEvent(player)) {
+                Logger.info("Login request successful for [username: ${request.username}] with ip [address: ${request.session.remoteAddress}].")
+            }
         } else {
             /*
              * Login failed due to invalid credentials.

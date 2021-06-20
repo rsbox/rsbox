@@ -1,5 +1,0 @@
-dependencies {
-    implementation project(":common")
-    implementation project(":engine")
-    implementation "com.googlecode.lanterna:lanterna:_"
-}

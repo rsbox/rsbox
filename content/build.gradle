@@ -1,0 +1,38 @@
+dependencies {
+    implementation project(":common")
+    implementation("org.jetbrains.kotlin:kotlin-scripting-common:_")
+    implementation("org.jetbrains.kotlin:kotlin-scripting-jvm:_")
+    implementation("org.jetbrains.kotlin:kotlin-scripting-jvm-host:_")
+    implementation("org.jetbrains.kotlin:kotlin-scripting-dependencies:_")
+}
+
+def contentDir = rootProject.projectDir.toPath().resolve("data").resolve("content")
+
+subprojects {
+    dependencies {
+        implementation project(":common")
+        implementation project(":engine")
+        implementation project(":api")
+        implementation project(":cache")
+        implementation project(":content")
+        implementation("org.jetbrains.kotlin:kotlin-scripting-common:_")
+        implementation("org.jetbrains.kotlin:kotlin-scripting-jvm:_")
+        implementation("org.jetbrains.kotlin:kotlin-scripting-jvm-host:_")
+        implementation("org.jetbrains.kotlin:kotlin-scripting-dependencies:_")
+    }
+
+    task createJar(type: Jar) {
+        group = "rsbox"
+        baseName = project.name
+        classifier = ""
+        with jar
+    }
+
+    task buildContent(type: Copy) {
+        group = "rsbox"
+        from createJar
+        into contentDir
+    }
+
+    build.finalizedBy buildContent
+}

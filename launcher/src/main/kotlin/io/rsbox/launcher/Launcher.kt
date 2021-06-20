@@ -8,8 +8,6 @@ import io.rsbox.common.di.inject
 import io.rsbox.common.rsa.RSA
 import io.rsbox.config.ConfigModule
 import io.rsbox.config.RSBoxConfig
-import io.rsbox.console.ConsoleApp
-import io.rsbox.console.ConsoleModule
 import io.rsbox.engine.Engine
 import io.rsbox.engine.EngineModule
 import io.rsbox.engine.net.NetworkModule
@@ -23,7 +21,6 @@ class Launcher {
     private val gameCache: GameCache by inject()
     private val engine: Engine by inject()
     private val rsa: RSA by inject()
-    private val consoleApp: ConsoleApp by inject()
 
     fun launch() {
         /*
@@ -112,7 +109,7 @@ class Launcher {
                     EngineModule,
                     NetworkModule,
                     CommonModule,
-                    ConsoleModule
+                    ContentModel
                 )
             }
         }
