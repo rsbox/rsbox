@@ -35,7 +35,7 @@ class Engine  {
     /**
      * The game coroutine scope.
      */
-    val gameCoroutineScope = GameCoroutineScope(gameExecutor.asCoroutineDispatcher())
+    private val gameCoroutineScope = GameCoroutineScope(gameExecutor.asCoroutineDispatcher())
 
     var state: EngineState = EngineState.SHUTDOWN
         private set

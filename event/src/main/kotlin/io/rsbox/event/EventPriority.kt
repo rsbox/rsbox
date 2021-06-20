@@ -1,16 +1,16 @@
 package io.rsbox.event
 
-enum class EventPriority(val priority: Int) : Comparable<EventPriority> {
+enum class EventPriority(val level: Int) : Comparable<EventPriority> {
 
-    LOWEST(0),
+    LOWEST(-2),
 
-    LOW(1),
+    LOW(-1),
 
-    NORMAL(2),
+    NORMAL(0),
 
-    HIGH(3),
+    HIGH(1),
 
-    HIGHEST(4);
+    HIGHEST(2);
 
 }
 
