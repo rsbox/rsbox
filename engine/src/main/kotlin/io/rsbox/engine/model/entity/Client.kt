@@ -23,9 +23,7 @@ class Client {
     lateinit var session: Session internal set
 
     var isResizableMode: Boolean = false
-
     var width: Int = 0
-
     var height: Int = 0
 
     /**

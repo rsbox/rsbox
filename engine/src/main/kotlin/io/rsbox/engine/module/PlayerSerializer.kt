@@ -13,7 +13,6 @@ import io.rsbox.engine.net.login.LoginRequest
 import org.tinylog.kotlin.Logger
 import java.io.File
 import java.nio.file.Paths
-import java.security.MessageDigest
 import kotlin.math.min
 
 object PlayerSerializer {
@@ -58,12 +57,12 @@ object PlayerSerializer {
         config[PlayerSpec.username] = player.username
         config[PlayerSpec.password] = player.password
         config[PlayerSpec.displayName] = player.displayName
-        config[PlayerSpec.HomeTile.x] = player.homeTile.position.x
-        config[PlayerSpec.HomeTile.y] = player.homeTile.position.y
-        config[PlayerSpec.HomeTile.level] = player.homeTile.position.level
-        config[PlayerSpec.Tile.x] = player.tile.position.x
-        config[PlayerSpec.Tile.y] = player.tile.position.y
-        config[PlayerSpec.Tile.level] = player.tile.position.level
+        config[PlayerSpec.HomeTile.x] = player.homeTile.x
+        config[PlayerSpec.HomeTile.y] = player.homeTile.y
+        config[PlayerSpec.HomeTile.level] = player.homeTile.level
+        config[PlayerSpec.Tile.x] = player.tile.x
+        config[PlayerSpec.Tile.y] = player.tile.y
+        config[PlayerSpec.Tile.level] = player.tile.level
 
         config.toJson.toFile(file)
     }
