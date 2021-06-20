@@ -42,15 +42,18 @@ class Tile(val packed: Int) {
 
     operator fun component3(): Int = level
 
-    val chunk get() = Chunk(
+    val chunk: Chunk get() = Chunk(
         x / Chunk.SIZE,
         y / Chunk.SIZE
     )
 
-    
+    val region: Region get() = Region(
+        x / Region.SIZE,
+        y / Region.SIZE
+    )
 
     override fun toString(): String {
-        return "TILE[x=$x, y=$y, level=$level]"
+        return "TILE(x=$x, y=$y, level=$level)"
     }
 
     companion object {

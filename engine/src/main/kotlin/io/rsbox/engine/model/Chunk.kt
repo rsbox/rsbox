@@ -17,6 +17,29 @@ class Chunk(private val packed: Int) {
         (x and 0x7FFF) or ((y and 0x7FFF) shl 15) or (level shl 30)
     )
 
+    fun translate(offsetX: Int, offsetY: Int, offsetLevel: Int = 0) = Tile(
+        x + offsetX,
+        y + offsetY,
+        level + offsetLevel
+    )
+
+    fun translateX(offset: Int) = translate(offset, 0, 0)
+
+    fun translateY(offset: Int) = translate(0, offset, 0)
+
+    fun translateLevel(offset: Int) = translate(0, 0, offset)
+
+    val tile: Tile get() = Tile(
+        x * SIZE,
+        y * SIZE,
+        level
+    )
+
+    val region: Region get() = Region(
+        x / (Region.SIZE / SIZE),
+        y / (Region.SIZE / SIZE)
+    )
+
     companion object {
         const val SIZE = 8
     }

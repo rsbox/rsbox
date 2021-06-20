@@ -1,5 +1,7 @@
 package io.rsbox.engine.model.entity
 
+import io.rsbox.engine.model.Tile
+import io.rsbox.engine.model.Viewport
 import io.rsbox.engine.net.Session
 
 /**
@@ -23,8 +25,15 @@ class Client {
     lateinit var session: Session internal set
 
     var isResizableMode: Boolean = false
+
     var width: Int = 0
+
     var height: Int = 0
+
+    /**
+     * The client's game world viewport model.
+     */
+    var viewport = Viewport.ZERO
 
     /**
      * Processed ever game server tick.
@@ -32,6 +41,4 @@ class Client {
     fun cycle() {
         session.cycle()
     }
-
-
 }

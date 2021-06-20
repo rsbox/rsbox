@@ -3,6 +3,7 @@ package io.rsbox.engine.net
 import io.netty.buffer.ByteBuf
 import io.netty.channel.ChannelHandlerContext
 import io.rsbox.common.di.inject
+import io.rsbox.common.util.IsaacRandom
 import io.rsbox.engine.net.handshake.HandshakeProtocol
 import io.rsbox.engine.net.pipeline.GameChannelDecoder
 import io.rsbox.engine.net.pipeline.GameChannelEncoder
@@ -21,6 +22,9 @@ class Session(val ctx: ChannelHandlerContext) {
     val uuid = UUID.randomUUID()
 
     var protocol: AtomicReference<Protocol> = AtomicReference(null)
+
+    var encodeIsaac: IsaacRandom = IsaacRandom()
+    var decodeIsaac: IsaacRandom = IsaacRandom()
 
     private val messageQueue = LinkedBlockingQueue<Message>()
 
