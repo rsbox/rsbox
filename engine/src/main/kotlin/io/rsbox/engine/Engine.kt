@@ -3,6 +3,7 @@ package io.rsbox.engine
 import com.google.common.util.concurrent.ThreadFactoryBuilder
 import io.rsbox.common.di.inject
 import io.rsbox.engine.coroutine.GameCoroutineScope
+import io.rsbox.engine.model.world.World
 import io.rsbox.engine.net.NetworkServer
 import io.rsbox.engine.service.ServiceManager
 import kotlinx.coroutines.CoroutineScope
@@ -18,6 +19,10 @@ import kotlin.system.measureTimeMillis
  */
 class Engine  {
 
+    private val networkServer: NetworkServer by inject()
+    private val serviceManager: ServiceManager by inject()
+    private val world: World by inject()
+
     /**
      * Game engine executor thread.
      */
@@ -31,9 +36,6 @@ class Engine  {
      * The game coroutine scope.
      */
     val gameCoroutineScope = GameCoroutineScope(gameExecutor.asCoroutineDispatcher())
-
-    private val networkServer: NetworkServer by inject()
-    private val serviceManager: ServiceManager by inject()
 
     var state: EngineState = EngineState.SHUTDOWN
         private set
@@ -107,6 +109,7 @@ class Engine  {
      * Executes all of the logic for each cycle of the game engine.
      */
     private suspend fun cycle() {
+        world.cycle()
     }
 
     companion object {

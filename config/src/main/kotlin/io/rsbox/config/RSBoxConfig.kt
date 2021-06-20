@@ -46,6 +46,9 @@ class RSBoxConfig {
     val autoCreateNewPlayerSaves get() = this[Companion.auto_create_new_player_saves]
     val listenAddress get() = this[Companion.net_listen_address]
     val listenPort get() = this[Companion.net_listen_port]
+    val homeLocationX get() = this[Companion.loc_home_x]
+    val homeLocationY get() = this[Companion.loc_home_y]
+    val homeLocationLevel get() = this[Companion.loc_home_level]
 
     companion object : ConfigSpec("rsbox") {
         /**
@@ -62,5 +65,12 @@ class RSBoxConfig {
          */
         val net_listen_address by optional("0.0.0.0", "network.listen-address")
         val net_listen_port by optional(43594, "network.listen-port")
+
+        /**
+         * Default locations
+         */
+        val loc_home_x by optional(3218, "locations.home.x")
+        val loc_home_y by optional(3218, "locations.home.y")
+        val loc_home_level by optional(0, "locations.home.level")
     }
 }
