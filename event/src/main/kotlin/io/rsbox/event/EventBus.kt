@@ -16,16 +16,23 @@ val eventSubjects = TreeMap <EventPriority, Subject<Event>>()
 val eventHistoryMap = hashMapOf<Class<Event>, Event>()
 val eventListenerMap = TreeMap<EventPriority, Int>()
 
+@DslMarker
+annotation class ListenerDsl
+
+@DslMarker
+annotation class TriggerDsl
+
+@ListenerDsl
 @Suppress("FunctionName")
 inline fun <reified T : Event> on_event(priority: EventPriority = EventPriority.NORMAL, noinline action: (T) -> Unit) {
-    val observable = synchronized(eventSubjects) {
-        (eventSubjects[priority] ?: PublishSubject.create<Event?>().toSerialized().also {
-            eventSubjects[priority] = it
+    val observable = synchronized(io.rsbox.event.eventSubjects) {
+        (io.rsbox.event.eventSubjects[priority] ?: PublishSubject.create<Event?>().toSerialized().also {
+            io.rsbox.event.eventSubjects[priority] = it
         }).ofType(T::class.java)
     }
 
-    val disposable = synchronized(eventHistoryMap) {
-        eventHistoryMap.filter { T::class.java.isAssignableFrom(it.key) }
+    val disposable = synchronized(io.rsbox.event.eventHistoryMap) {
+        io.rsbox.event.eventHistoryMap.filter { T::class.java.isAssignableFrom(it.key) }
             .toSortedMap { a, b ->
                 if(a.isAssignableFrom(b)) 1 else -1
             }.map { it.value }
@@ -35,15 +42,15 @@ inline fun <reified T : Event> on_event(priority: EventPriority = EventPriority.
                 })
             }
     }.doOnSubscribe {
-        synchronized(eventSubjects) {
-            eventListenerMap[priority] = eventListenerMap[priority]?.let { count -> count + 1 } ?: 1
+        synchronized(io.rsbox.event.eventSubjects) {
+            io.rsbox.event.eventListenerMap[priority] = io.rsbox.event.eventListenerMap[priority]?.let { count -> count + 1 } ?: 1
         }
     }.doOnDispose {
-        synchronized(eventSubjects) {
-            eventListenerMap[priority] = eventListenerMap[priority]?.let { count -> count - 1 } ?: 0
-            if(eventListenerMap[priority] == 0) {
-                eventSubjects.remove(priority)
-                eventListenerMap.remove(priority)
+        synchronized(io.rsbox.event.eventSubjects) {
+            io.rsbox.event.eventListenerMap[priority] = io.rsbox.event.eventListenerMap[priority]?.let { count -> count - 1 } ?: 0
+            if(io.rsbox.event.eventListenerMap[priority] == 0) {
+                io.rsbox.event.eventSubjects.remove(priority)
+                io.rsbox.event.eventListenerMap.remove(priority)
             }
         }
     }
@@ -55,16 +62,17 @@ inline fun <reified T : Event> on_event(priority: EventPriority = EventPriority.
     }
 }
 
+@TriggerDsl
 @Suppress("UNCHECKED_CAST")
 fun <T : Event> fire_event(event: T, action: (T) -> Unit) {
     var cancelled = false
 
-    synchronized(eventHistoryMap) {
-        eventHistoryMap[event::class.java as Class<Event>] = event
+    synchronized(io.rsbox.event.eventHistoryMap) {
+        io.rsbox.event.eventHistoryMap[event::class.java as Class<Event>] = event
     }
 
-    synchronized(eventSubjects) {
-        eventSubjects.descendingMap().toMap().forEach {
+    synchronized(io.rsbox.event.eventSubjects) {
+        io.rsbox.event.eventSubjects.descendingMap().toMap().forEach {
             it.value.onNext(event)
             if(!cancelled && (event.isCancellable && event.isCancelled())) {
                 event.onCancel()

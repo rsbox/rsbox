@@ -1,3 +1,5 @@
+import java.nio.file.Files
+
 plugins {
     id 'de.fayard.refreshVersions' version '0.10.1'
 }
@@ -10,11 +12,27 @@ include ':launcher'
 include ':engine'
 include ':config'
 include ':event'
-include ':content'
 include ':api'
 
-/*
- * RSBOX CONTENT MODULES
+/**
+ * Include content modules dynamically.
  */
 
-include ':content:core'
+include ':content'
+
+def contentPath = project(':content').projectDir.toPath()
+
+Files.walk(contentPath).forEach { path ->
+    if(!Files.isDirectory(path)) {
+        return
+    }
+
+    if(!Files.exists(path.resolve("build.gradle"))) {
+        return
+    }
+
+    def relativePath = contentPath.relativize(path)
+    def moduleName = relativePath.toString().replace(File.separator, ":")
+
+    include(":content:$moduleName")
+}

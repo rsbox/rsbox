@@ -3,9 +3,12 @@ package io.rsbox.engine
 import com.google.common.util.concurrent.ThreadFactoryBuilder
 import io.rsbox.common.di.inject
 import io.rsbox.engine.coroutine.GameCoroutineScope
+import io.rsbox.engine.event.EngineShutdownEvent
+import io.rsbox.engine.event.EngineStartupEvent
 import io.rsbox.engine.model.world.World
 import io.rsbox.engine.net.NetworkServer
 import io.rsbox.engine.service.ServiceManager
+import io.rsbox.event.fire_event
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.launch
@@ -64,7 +67,10 @@ class Engine  {
          */
         gameCoroutineScope.start(CYCLE_MILLIS)
 
-        Logger.info("Server has completed startup successfully.")
+
+        fire_event(EngineStartupEvent(this)) {
+            Logger.info("Server has completed startup successfully.")
+        }
     }
 
     fun shutdown() {
@@ -85,6 +91,10 @@ class Engine  {
          * Shutdown the networking server
          */
         networkServer.shutdown()
+
+        fire_event(EngineShutdownEvent(this)) {
+            Logger.info("Engine has completed shutdown procedure successfully.")
+        }
     }
 
     private fun CoroutineScope.start(interval: Long) = launch {

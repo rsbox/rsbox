@@ -35,6 +35,7 @@ object LoginProcessor {
          * Load the player save
          */
         val player = PlayerSerializer.read(username)
+        player.client.session = request.session
 
         if(username == player.username && password == player.password) {
             /*

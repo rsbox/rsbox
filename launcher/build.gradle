@@ -1,4 +1,5 @@
 plugins {
+    id 'org.jetbrains.kotlin.kapt'
     id 'application'
 }
 
@@ -6,6 +7,7 @@ run {
     group = 'rsbox'
     workingDir = rootProject.projectDir
     mainClassName = "io.rsbox.launcher.Launcher"
+    systemProperty "pf4j.pluginsDir", "data/content/"
 }
 
 dependencies {
@@ -14,4 +16,25 @@ dependencies {
     implementation project(":config")
     implementation project(":engine")
     implementation project(":content")
+    implementation project(":event")
+    implementation "org.pf4j:pf4j:_"
+    kapt "org.pf4j:pf4j:_"
+}
+
+task shadowJar(type: Jar, dependsOn: ['compileKotlin']) {
+    group = "build"
+    zip64 true
+    from configurations.runtimeClasspath.asFileTree.files.collect {
+        exclude "META-INF/*.SF"
+        exclude "META-INF/*.DSA"
+        exclude "META-INF/*.RSA"
+        zipTree(it)
+    }
+    from files(sourceSets.main.output.classesDirs)
+    from files(sourceSets.main.resources)
+    manifest {
+        attributes 'Main-Class': 'io.rsbox.launcher.Launcher'
+    }
+    archiveBaseName = "rsbox-server"
+    archiveClassifier = "shadowjar"
 }

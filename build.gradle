@@ -4,6 +4,7 @@ plugins {
 
 allprojects {
     apply plugin: 'org.jetbrains.kotlin.jvm'
+    apply plugin: 'idea'
 
     group 'io.rsbox'
     version '1.0.0'

@@ -11,6 +11,7 @@ import io.rsbox.config.RSBoxConfig
 import io.rsbox.engine.Engine
 import io.rsbox.engine.EngineModule
 import io.rsbox.engine.net.NetworkModule
+import io.rsbox.launcher.plugin.PluginLoader
 import org.koin.core.context.startKoin
 import org.tinylog.kotlin.Logger
 import java.io.File
@@ -47,6 +48,11 @@ class Launcher {
          * Init RSA key files
          */
         this.initRSA()
+
+        /*
+         * Init plugin manager
+         */
+        PluginLoader.init()
 
         /*
          * Start the game engine.
@@ -108,8 +114,7 @@ class Launcher {
                     ConfigModule,
                     EngineModule,
                     NetworkModule,
-                    CommonModule,
-                    ContentModel
+                    CommonModule
                 )
             }
         }
