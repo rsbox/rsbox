@@ -5,6 +5,7 @@ import io.rsbox.common.di.inject
 import io.rsbox.config.RSBoxConfig
 import io.rsbox.engine.net.*
 import io.rsbox.engine.net.js5.JS5Protocol
+import io.rsbox.engine.net.login.LoginProtocol
 
 class HandshakeProtocol(override val session: Session) : Protocol {
 
@@ -40,6 +41,13 @@ class HandshakeProtocol(override val session: Session) : Protocol {
             is HandshakeRequest.JS5 -> {
                 session.writeAndFlush(ServerStatus.ACCEPTABLE)
                 session.protocol.set(JS5Protocol(session))
+            }
+
+            is HandshakeRequest.Login -> {
+                session.write(ServerStatus.ACCEPTABLE)
+                session.write(session.buffer(8).writeLong(session.seed))
+                session.flush()
+                session.protocol.set(LoginProtocol(session))
             }
         }
     }

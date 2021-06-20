@@ -1,5 +1,6 @@
 package io.rsbox.engine.net
 
+import io.netty.buffer.ByteBuf
 import io.netty.channel.ChannelHandlerContext
 import io.rsbox.common.di.inject
 import io.rsbox.engine.net.handshake.HandshakeProtocol
@@ -85,5 +86,7 @@ class Session(val ctx: ChannelHandlerContext) {
             }
         }
     }
+
+    fun buffer(capacity: Int): ByteBuf = ctx.alloc().buffer(capacity)
 
 }

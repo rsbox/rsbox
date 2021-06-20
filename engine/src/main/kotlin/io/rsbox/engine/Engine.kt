@@ -4,6 +4,7 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder
 import io.rsbox.common.di.inject
 import io.rsbox.engine.coroutine.GameCoroutineScope
 import io.rsbox.engine.net.NetworkServer
+import io.rsbox.engine.service.ServiceManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.launch
@@ -32,6 +33,7 @@ class Engine  {
     val gameCoroutineScope = GameCoroutineScope(gameExecutor.asCoroutineDispatcher())
 
     private val networkServer: NetworkServer by inject()
+    private val serviceManager: ServiceManager by inject()
 
     var state: EngineState = EngineState.SHUTDOWN
         private set
@@ -44,6 +46,11 @@ class Engine  {
         Logger.info("Starting RSBox game engine...")
 
         state = EngineState.RUNNING
+
+        /*
+         * Start all engine services
+         */
+        serviceManager.startServices()
 
         /*
          * Start the networking server
@@ -66,6 +73,11 @@ class Engine  {
         Logger.info("Shutting down RSBox game engine...")
 
         state = EngineState.SHUTDOWN
+
+        /*
+         * Stop all engine services
+         */
+        serviceManager.stopServices()
 
         /*
          * Shutdown the networking server

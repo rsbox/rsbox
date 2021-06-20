@@ -120,7 +120,7 @@ class JS5Protocol(override val session: Session) : Protocol {
 
         private fun JS5Request.createResponse(): JS5Response {
             if(!CACHED_RESPONSES.containsKey(this)) {
-                CACHED_RESPONSES[this] = Companion.createResponse(archive, group)
+                CACHED_RESPONSES[this] = createResponse(archive, group)
             }
 
             return CACHED_RESPONSES[this]!!
