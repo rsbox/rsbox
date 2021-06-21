@@ -27,4 +27,9 @@ class Player(val client: Client) : LivingEntity() {
      */
     var homeTile: Tile = Tile(0, 0, 0)
 
+    fun isOnline(): Boolean = world.players.contains(this)
+
+    fun isOffline(): Boolean = !isOnline()
+
+
 }

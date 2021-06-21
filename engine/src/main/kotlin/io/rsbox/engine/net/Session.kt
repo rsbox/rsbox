@@ -23,6 +23,7 @@ class Session(val ctx: ChannelHandlerContext) {
 
     var protocol: AtomicReference<Protocol> = AtomicReference(null)
 
+    var xteas: IntArray = IntArray(4) { 0 }
     var encodeIsaac: IsaacRandom = IsaacRandom()
     var decodeIsaac: IsaacRandom = IsaacRandom()
 

@@ -50,34 +50,25 @@ class IsaacRandom {
     /**
      * The internal state.
      */
-    private var mem: IntArray
+    private lateinit var mem: IntArray
 
     /**
      * The results given to the user.
      */
-    private var rsl: IntArray
+    private lateinit var rsl: IntArray
 
     /**
-     * Creates the random number generator without an initial seed.
-     */
-    constructor() {
-        mem = IntArray(SIZE)
-        rsl = IntArray(SIZE)
-        init(false)
-    }
-
-    /**
-     * Creates the random number generator with the specified seed.
+     * Initializes the random number generator with the specified seed.
      *
      * @param seed The seed.
      */
-    constructor(seed: IntArray) {
+    fun init(seed: IntArray) {
         mem = IntArray(SIZE)
         rsl = IntArray(SIZE)
         for (i in seed.indices) {
             rsl[i] = seed[i]
         }
-        init(true)
+        init()
     }
 
     /**
@@ -85,7 +76,7 @@ class IsaacRandom {
      *
      * @param hasSeed Set to `true` if a seed was passed to the constructor.
      */
-    private fun init(hasSeed: Boolean) {
+    private fun init(hasSeed: Boolean = true) {
         var i: Int
         var a: Int
         var b: Int
@@ -326,27 +317,32 @@ class IsaacRandom {
         return rsl[count]
     }
 
+    fun opcodeModifier(): Int = if (this === ZERO) 0 else nextInt()
+
     companion object {
+        /**
+         * A constant, uninitialized [IsaacRandom] instance.
+         */
+        val ZERO = IsaacRandom()
 
         /**
          * The golden ratio.
          */
-        private val GOLDEN_RATIO = -0x61c88647
+        private const val GOLDEN_RATIO = -0x61c88647
 
         /**
          * The log of the size of the result and memory arrays.
          */
-        private val LOG_SIZE = 8
+        private const val LOG_SIZE = 8
 
         /**
          * The size of the result and memory arrays.
          */
-        private val SIZE = 1 shl LOG_SIZE
+        private const val SIZE = 1 shl LOG_SIZE
 
         /**
          * A mask for pseudorandom lookup.
          */
-        private val MASK = SIZE - 1 shl 2
+        private const val MASK = SIZE - 1 shl 2
     }
-
 }

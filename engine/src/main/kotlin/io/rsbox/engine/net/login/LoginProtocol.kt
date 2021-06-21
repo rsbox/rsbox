@@ -270,6 +270,7 @@ class LoginProtocol(override val session: Session) : Protocol {
                 session,
                 username,
                 password,
+                xteas,
                 authCode,
                 isResizableMode,
                 clientWidth,

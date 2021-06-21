@@ -13,6 +13,8 @@ class EntityList<T : Entity>(val capacity: Int) {
     var size: Int = 0
         private set
 
+    fun contains(element: T): Boolean = entries.containsValue(element)
+
     fun forEach(action: (T) -> Unit) = entries.values.filterNotNull().forEach(action)
 
     fun any(predicate: (T) -> Boolean): Boolean {
