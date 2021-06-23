@@ -87,6 +87,11 @@ object LoginProcessor {
         }
 
         val response = LoginResponse(this)
-        session.writeAndFlush(response)
+        session.writeAndFlush(response).addListener {
+            if(it.isSuccess) {
+                session.protocol.set(GameProtocol(session))
+                session.write(LoadRegionNormal(3203, 300))
+            }
+        }
     }
 }

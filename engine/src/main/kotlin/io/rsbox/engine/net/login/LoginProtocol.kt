@@ -13,6 +13,8 @@ import io.rsbox.engine.net.Message
 import io.rsbox.engine.net.Protocol
 import io.rsbox.engine.net.ServerStatus
 import io.rsbox.engine.net.Session
+import io.rsbox.engine.net.game.GameProtocol
+import io.rsbox.engine.net.game.packet.outbound.LoadRegionNormal
 import io.rsbox.engine.service.ServiceManager
 import io.rsbox.engine.service.login.LoginService
 import java.math.BigInteger
