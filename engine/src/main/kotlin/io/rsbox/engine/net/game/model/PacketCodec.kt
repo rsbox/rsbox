@@ -5,7 +5,7 @@ import io.rsbox.engine.net.Session
 
 interface PacketCodec<P : Packet> {
 
-    fun encode(session: Session, packet: @UnsafeVariance P, out: ByteBuf) {
+    fun encode(session: Session, packet: P, out: ByteBuf) {
         throw UnsupportedOperationException()
     }
 
