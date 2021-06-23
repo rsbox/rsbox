@@ -6,6 +6,7 @@ import io.netty.channel.nio.NioEventLoopGroup
 import io.netty.channel.socket.nio.NioServerSocketChannel
 import io.rsbox.common.di.inject
 import io.rsbox.config.RSBoxConfig
+import io.rsbox.engine.net.game.PacketRegistry
 import io.rsbox.engine.net.pipeline.GameChannelInitializer
 import org.tinylog.kotlin.Logger
 import java.net.InetSocketAddress
@@ -31,6 +32,11 @@ class NetworkServer {
     }
 
     fun start() {
+        /*
+         * Scan and register all game packets.
+         */
+        PacketRegistry.register()
+
         Logger.info("Starting engine networking server...")
 
         /*

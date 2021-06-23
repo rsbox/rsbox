@@ -6,8 +6,10 @@ import io.rsbox.config.RSBoxConfig
 import io.rsbox.engine.model.entity.Player
 import io.rsbox.engine.module.PlayerSerializer
 import io.rsbox.engine.net.ServerStatus
+import io.rsbox.engine.net.game.GameProtocol
 import io.rsbox.engine.net.login.LoginRequest
 import io.rsbox.engine.net.login.LoginResponse
+import io.rsbox.engine.net.packet.outbound.RebuildRegionNormal
 import org.tinylog.kotlin.Logger
 
 object LoginProcessor {
@@ -63,10 +65,10 @@ object LoginProcessor {
         val session = this.client.session
 
         /*
-         * Set the isaac random number generators.
+         * Initialize the session's isaac instances with the xtea encryption keys.
          */
-        session.decodeIsaac.init(session.xteas)
-        session.encodeIsaac.init(IntArray(session.xteas.size) { session.xteas[it] + 50 })
+        session.encodeIsaac.init(session.xteas)
+        session.decodeIsaac.init(IntArray(session.xteas.size) { session.xteas[it] + 50 })
 
         /*
          * Check if the player is already online or not and register with the game world.
@@ -83,6 +85,9 @@ object LoginProcessor {
         }
 
         val response = LoginResponse(this)
-        session.writeAndFlush(response)
+        session.write(response)
+
+        session.protocol.set(GameProtocol(session))
+        session.write(RebuildRegionNormal(this, true))
     }
 }

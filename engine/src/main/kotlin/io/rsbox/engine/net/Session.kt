@@ -98,4 +98,5 @@ class Session(val ctx: ChannelHandlerContext) {
 
     fun buffer(capacity: Int): ByteBuf = ctx.alloc().buffer(capacity)
 
+    fun buffer(): ByteBuf = ctx.alloc().buffer()
 }
