@@ -9,12 +9,11 @@ import io.rsbox.common.di.inject
 import io.rsbox.common.rsa.RSA
 import io.rsbox.common.util.Xtea
 import io.rsbox.config.RSBoxConfig
+import io.rsbox.engine.model.entity.Player
 import io.rsbox.engine.net.Message
 import io.rsbox.engine.net.Protocol
 import io.rsbox.engine.net.ServerStatus
 import io.rsbox.engine.net.Session
-import io.rsbox.engine.net.game.GameProtocol
-import io.rsbox.engine.net.game.packet.outbound.LoadRegionNormal
 import io.rsbox.engine.service.ServiceManager
 import io.rsbox.engine.service.login.LoginService
 import java.math.BigInteger
@@ -301,17 +300,17 @@ class LoginProtocol(override val session: Session) : Protocol {
 
             is LoginResponse -> {
                 out.writeByte(2)
-                val start = out.writerIndex() + Byte.SIZE_BYTES
-                out.writeByte(0)
-                out.writeBoolean(false)
+                out.writeByte(10)
                 out.writeInt(0)
+                out.writeBoolean(false)
                 out.writeByte(3)
                 out.writeBoolean(true)
                 out.writeShort(message.player.index)
                 out.writeBoolean(true)
 
-                val length = out.writerIndex() - start
-                out.setByte(start, length)
+                /*
+                 * Send the data for the player gpi.
+                 */
             }
         }
     }
@@ -327,5 +326,4 @@ class LoginProtocol(override val session: Session) : Protocol {
             }
         }
     }
-
 }

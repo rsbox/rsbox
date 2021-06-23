@@ -17,6 +17,10 @@ class EntityList<T : Entity>(val capacity: Int) {
 
     fun forEach(action: (T) -> Unit) = entries.values.filterNotNull().forEach(action)
 
+    operator fun get(index: Int): T? {
+        return entries[index]
+    }
+
     fun any(predicate: (T) -> Boolean): Boolean {
         entries.values.forEach {
             if(it != null && predicate(it)) {

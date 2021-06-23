@@ -1,7 +1,5 @@
 package io.rsbox.engine.model.entity
 
-import io.rsbox.engine.model.Tile
-import io.rsbox.engine.model.Viewport
 import io.rsbox.engine.net.Session
 
 /**
@@ -31,14 +29,12 @@ class Client {
     var height: Int = 0
 
     /**
-     * The client's game world viewport model.
-     */
-    var viewport = Viewport.ZERO
-
-    /**
      * Processed ever game server tick.
      */
     fun cycle() {
         session.cycle()
     }
+
+    fun flush() = session.flush()
+
 }

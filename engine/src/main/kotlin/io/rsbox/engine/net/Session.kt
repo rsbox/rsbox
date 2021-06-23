@@ -4,6 +4,7 @@ import io.netty.buffer.ByteBuf
 import io.netty.channel.ChannelHandlerContext
 import io.rsbox.common.di.inject
 import io.rsbox.common.util.IsaacRandom
+import io.rsbox.engine.net.game.GameProtocol
 import io.rsbox.engine.net.handshake.HandshakeProtocol
 import io.rsbox.engine.net.pipeline.GameChannelDecoder
 import io.rsbox.engine.net.pipeline.GameChannelEncoder
@@ -53,7 +54,10 @@ class Session(val ctx: ChannelHandlerContext) {
 
     fun receive(message: Message) {
         messageQueue.add(message)
-        this.cycle()
+
+        if(protocol.get() !is GameProtocol) {
+            this.cycle()
+        }
     }
 
     fun error(cause: Throwable) {

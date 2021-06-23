@@ -3,12 +3,11 @@ package io.rsbox.engine
 import com.google.common.util.concurrent.ThreadFactoryBuilder
 import io.rsbox.common.di.inject
 import io.rsbox.engine.coroutine.GameCoroutineScope
-import io.rsbox.engine.event.EngineShutdownEvent
-import io.rsbox.engine.event.EngineStartupEvent
+import io.rsbox.engine.event.EngineStartEvent
 import io.rsbox.engine.model.world.World
 import io.rsbox.engine.net.NetworkServer
 import io.rsbox.engine.service.ServiceManager
-import io.rsbox.event.fire_event
+import io.rsbox.event.EventBus
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.launch
@@ -67,8 +66,7 @@ class Engine  {
          */
         gameCoroutineScope.start(CYCLE_MILLIS)
 
-
-        fire_event(EngineStartupEvent(this)) {
+        EventBus.event(EngineStartEvent(this)) {
             Logger.info("Server has completed startup successfully.")
         }
     }
@@ -92,9 +90,7 @@ class Engine  {
          */
         networkServer.shutdown()
 
-        fire_event(EngineShutdownEvent(this)) {
-            Logger.info("Engine has completed shutdown procedure successfully.")
-        }
+        Logger.info("Engine has completed shutdown procedure successfully.")
     }
 
     private fun CoroutineScope.start(interval: Long) = launch {
@@ -115,11 +111,27 @@ class Engine  {
         }
     }
 
+    private suspend fun preCycle() {
+        world.players.forEach { player ->
+            player.client.cycle()
+        }
+    }
+
     /**
      * Executes all of the logic for each cycle of the game engine.
      */
     private suspend fun cycle() {
+        this.preCycle()
+
         world.cycle()
+
+        this.postCycle()
+    }
+
+    private suspend fun postCycle() {
+        world.players.forEach { player ->
+            player.client.flush()
+        }
     }
 
     companion object {

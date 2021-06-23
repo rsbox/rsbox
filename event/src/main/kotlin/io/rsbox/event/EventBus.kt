@@ -1,88 +1,65 @@
 package io.rsbox.event
 
-import io.reactivex.rxjava3.core.ObservableSource
-import io.reactivex.rxjava3.subjects.PublishSubject
-import io.reactivex.rxjava3.subjects.Subject
-import java.util.*
+import io.github.classgraph.ClassGraph
+import org.tinylog.kotlin.Logger
+import kotlin.reflect.KClass
+import kotlin.reflect.KFunction
+import kotlin.reflect.full.companionObject
+import kotlin.reflect.full.createInstance
+import kotlin.reflect.jvm.isAccessible
+import kotlin.reflect.jvm.kotlinFunction
 
-/**
- * The backing event bus system which handles the listening and firing of engine events
- * through the reactive rxjava3 library.
- *
- * This event bus is NOT async and runs on the main thread. It has to avoid thread conflicts.
- */
+object EventBus {
 
-val eventSubjects = TreeMap <EventPriority, Subject<Event>>()
-val eventHistoryMap = hashMapOf<Class<Event>, Event>()
-val eventListenerMap = TreeMap<EventPriority, Int>()
+    private val listeners = mutableMapOf<KClass<out Event>, MutableList<Triple<EventPriority, Any, KFunction<Event>>>>()
 
-@DslMarker
-annotation class ListenerDsl
+    @Suppress("UNCHECKED_CAST")
+    fun register() {
+        Logger.info("Scanning for event listeners...")
 
-@DslMarker
-annotation class TriggerDsl
+        val scan = ClassGraph().enableAllInfo().scan().getClassesWithMethodAnnotation(EventListener::class.qualifiedName)
+        scan.forEach { cls ->
+            cls.declaredMethodInfo.forEach { method ->
+                if(method.hasAnnotation(EventListener::class.qualifiedName)) {
+                    val annotation = method.getAnnotationInfo(EventListener::class.qualifiedName).loadClassAndInstantiate() as EventListener
+                    val event = annotation.value
+                    val priority = annotation.priority
 
-@ListenerDsl
-@Suppress("FunctionName")
-inline fun <reified T : Event> on_event(priority: EventPriority = EventPriority.NORMAL, noinline action: (T) -> Unit) {
-    val observable = synchronized(eventSubjects) {
-        (eventSubjects[priority] ?: PublishSubject.create<Event?>().toSerialized().also {
-            eventSubjects[priority] = it
-        }).ofType(T::class.java)
+                    val kmethod = method.loadClassAndGetMethod().kotlinFunction as KFunction<Event>
+                    kmethod.isAccessible = true
+
+                    val obj = cls.loadClass().kotlin.companionObject?.createInstance()
+                        ?: cls.loadClass().kotlin.objectInstance!!
+
+                    listeners[event] = listeners.computeIfAbsent(event) { mutableListOf() }.apply { this.add(Triple(priority, obj, kmethod)) }
+                }
+            }
+        }
+
+        Logger.info("Registered ${listeners.size} event listeners.")
     }
 
-    val disposable = synchronized(eventHistoryMap) {
-        eventHistoryMap.filter { T::class.java.isAssignableFrom(it.key) }
-            .toSortedMap { a, b ->
-                if(a.isAssignableFrom(b)) 1 else -1
-            }.map { it.value }
-            .fold(observable) { observable, lastEvent ->
-                observable.mergeWith(ObservableSource { observer ->
-                    observer.onNext(T::class.java.cast(lastEvent))
-                })
-            }
-    }.doOnSubscribe {
-        synchronized(eventSubjects) {
-            eventListenerMap[priority] = eventListenerMap[priority]?.let { count -> count + 1 } ?: 1
-        }
-    }.doOnDispose {
-        synchronized(eventSubjects) {
-            eventListenerMap[priority] = eventListenerMap[priority]?.let { count -> count - 1 } ?: 0
-            if(eventListenerMap[priority] == 0) {
-                eventSubjects.remove(priority)
-                eventListenerMap.remove(priority)
-            }
+    private fun triggerEvent(event: Event) {
+        val eventListeners = listeners.computeIfAbsent(event::class) { mutableListOf() }
+        eventListeners.sortByDescending { it.first.level }
+
+        for(listener in eventListeners) {
+            if(event.isCancelled) break
+            listener.third.call(listener.second, event)
         }
     }
 
-    disposable.subscribe { event ->
-        if(!event.isCancelled()) {
+    fun <E : Event> event(event: E, action: (E) -> Unit) {
+        /*
+         * Trigger all of the event listeners.
+         */
+        this.triggerEvent(event)
+
+        /*
+         * If the event was not cancelled, invoke the event firing action.
+         */
+        if(!event.isCancelled) {
             action(event)
         }
     }
 }
-
-@TriggerDsl
-@Suppress("UNCHECKED_CAST")
-fun <T : Event> fire_event(event: T, action: (T) -> Unit) {
-    var cancelled = false
-
-    synchronized(eventHistoryMap) {
-        eventHistoryMap[event::class.java as Class<Event>] = event
-    }
-
-    synchronized(eventSubjects) {
-        eventSubjects.descendingMap().toMap().forEach {
-            it.value.onNext(event)
-            if(!cancelled && (event.isCancellable && event.isCancelled())) {
-                event.onCancel()
-                cancelled = true
-            }
-        }
-    }
-
-    if(!cancelled) {
-        action(event)
-    }
-}
-

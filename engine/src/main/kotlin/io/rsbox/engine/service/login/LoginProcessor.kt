@@ -3,15 +3,11 @@ package io.rsbox.engine.service.login
 import io.rsbox.common.di.inject
 import io.rsbox.common.hash.SHA256
 import io.rsbox.config.RSBoxConfig
-import io.rsbox.engine.event.PlayerLoginEvent
 import io.rsbox.engine.model.entity.Player
 import io.rsbox.engine.module.PlayerSerializer
 import io.rsbox.engine.net.ServerStatus
-import io.rsbox.engine.net.game.GameProtocol
-import io.rsbox.engine.net.game.packet.outbound.LoadRegionNormal
 import io.rsbox.engine.net.login.LoginRequest
 import io.rsbox.engine.net.login.LoginResponse
-import io.rsbox.event.fire_event
 import org.tinylog.kotlin.Logger
 
 object LoginProcessor {
@@ -87,11 +83,6 @@ object LoginProcessor {
         }
 
         val response = LoginResponse(this)
-        session.writeAndFlush(response).addListener {
-            if(it.isSuccess) {
-                session.protocol.set(GameProtocol(session))
-                session.write(LoadRegionNormal(3203, 300))
-            }
-        }
+        session.writeAndFlush(response)
     }
 }

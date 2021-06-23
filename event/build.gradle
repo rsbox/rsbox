@@ -1,5 +1,4 @@
 dependencies {
     implementation project(":common")
-    implementation "io.reactivex.rxjava3:rxjava:_"
-    implementation "io.reactivex.rxjava3:rxkotlin:_"
+    implementation "io.github.classgraph:classgraph:_"
 }
