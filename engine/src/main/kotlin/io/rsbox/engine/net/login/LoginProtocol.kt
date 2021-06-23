@@ -297,7 +297,20 @@ class LoginProtocol(override val session: Session) : Protocol {
                 out.writeByte(message.id)
             }
 
+            is LoginResponse -> {
+                out.writeByte(2)
+                val start = out.writerIndex() + Byte.SIZE_BYTES
+                out.writeByte(0)
+                out.writeBoolean(false)
+                out.writeInt(0)
+                out.writeByte(3)
+                out.writeBoolean(true)
+                out.writeShort(message.player.index)
+                out.writeBoolean(true)
 
+                val length = out.writerIndex() - start
+                out.setByte(start, length)
+            }
         }
     }
 

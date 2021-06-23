@@ -7,7 +7,10 @@ import io.rsbox.engine.event.PlayerLoginEvent
 import io.rsbox.engine.model.entity.Player
 import io.rsbox.engine.module.PlayerSerializer
 import io.rsbox.engine.net.ServerStatus
+import io.rsbox.engine.net.game.GameProtocol
+import io.rsbox.engine.net.game.packet.outbound.LoadRegionNormal
 import io.rsbox.engine.net.login.LoginRequest
+import io.rsbox.engine.net.login.LoginResponse
 import io.rsbox.event.fire_event
 import org.tinylog.kotlin.Logger
 
@@ -83,6 +86,7 @@ object LoginProcessor {
             return
         }
 
-        session.flush()
+        val response = LoginResponse(this)
+        session.writeAndFlush(response)
     }
 }
