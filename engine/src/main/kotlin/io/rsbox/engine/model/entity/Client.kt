@@ -1,5 +1,7 @@
 package io.rsbox.engine.model.entity
 
+import io.rsbox.engine.model.`interface`.DisplayMode
+import io.rsbox.engine.model.`interface`.InterfaceManager
 import io.rsbox.engine.net.Session
 import io.rsbox.engine.net.game.Packet
 
@@ -28,6 +30,10 @@ class Client {
     var width: Int = 0
 
     var height: Int = 0
+
+    var displayMode: DisplayMode = DisplayMode.FIXED
+
+    val interfaces = InterfaceManager(this)
 
     val viewport = Viewport(this)
 

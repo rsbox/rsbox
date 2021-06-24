@@ -2,10 +2,8 @@ package io.rsbox.engine.net.packet.outbound
 
 import io.guthix.buffer.toBitMode
 import io.netty.buffer.ByteBuf
-import io.netty.buffer.Unpooled
 import io.rsbox.engine.model.Chunk
 import io.rsbox.engine.model.Region
-import io.rsbox.engine.model.RenderRegion
 import io.rsbox.engine.model.entity.Player
 import io.rsbox.engine.model.entity.Viewport
 import io.rsbox.engine.net.Session
