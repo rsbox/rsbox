@@ -84,11 +84,16 @@ object LoginProcessor {
             return
         }
 
+        /*
+         * Initialize the client's viewport for this player.
+         */
+        this.client.viewport.initialize()
+
         val response = LoginResponse(this)
         session.writeAndFlush(response).addListener { f ->
             if(f.isSuccess) {
                 session.protocol.set(GameProtocol(session))
-                session.writeAndFlush(RebuildRegionNormal(this))
+                session.writeAndFlush(RebuildRegionNormal(this, true))
             }
         }
     }

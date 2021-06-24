@@ -1,3 +1,7 @@
+plugins {
+    id 'org.jetbrains.kotlin.plugin.serialization' version '1.5.10'
+}
+
 dependencies {
     implementation project(":common")
     implementation project(":cache")
@@ -7,4 +11,5 @@ dependencies {
     implementation "com.google.guava:guava:_"
     implementation "io.netty:netty-all:_"
     implementation "io.github.classgraph:classgraph:_"
+    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:_"
 }

@@ -25,6 +25,6 @@ allprojects {
     }
 
     compileKotlin {
-        kotlinOptions.freeCompilerArgs = ['-Xuse-experimental=kotlinx.coroutines.ObsoleteCoroutinesApi']
+        kotlinOptions.freeCompilerArgs = ['-Xuse-experimental=kotlinx.coroutines.ObsoleteCoroutinesApi', '-Xuse-experimental=kotlinx.serialization']
     }
 }

@@ -1,5 +1,7 @@
 package io.rsbox.engine.model
 
+import io.rsbox.engine.module.XteaProvider
+
 class Region(val id: Int) {
 
     val x: Int get() = id shr 8
@@ -16,6 +18,8 @@ class Region(val id: Int) {
     fun translateX(offset: Int) = translate(offset, 0)
 
     fun translateY(offset: Int) = translate(0, offset)
+
+    val xteas: IntArray get() = XteaProvider[id]
 
     fun tile(level: Int) = Tile(
         x * SIZE,

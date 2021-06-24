@@ -5,6 +5,7 @@ import io.rsbox.common.di.inject
 import io.rsbox.engine.coroutine.GameCoroutineScope
 import io.rsbox.engine.event.EngineStartEvent
 import io.rsbox.engine.model.world.World
+import io.rsbox.engine.module.XteaProvider
 import io.rsbox.engine.net.NetworkServer
 import io.rsbox.engine.service.ServiceManager
 import io.rsbox.event.EventBus
@@ -12,6 +13,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.launch
 import org.tinylog.kotlin.Logger
+import java.io.File
 import java.util.concurrent.Executors
 import kotlin.math.abs
 import kotlin.system.measureTimeMillis
@@ -50,6 +52,11 @@ class Engine  {
         Logger.info("Starting RSBox game engine...")
 
         state = EngineState.RUNNING
+
+        /*
+         * Load region xtea keys from file
+         */
+        XteaProvider.load(File("data/xteas/xteas.json"))
 
         /*
          * Start all engine services

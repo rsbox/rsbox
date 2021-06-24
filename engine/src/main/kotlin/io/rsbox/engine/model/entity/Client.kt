@@ -1,6 +1,7 @@
 package io.rsbox.engine.model.entity
 
 import io.rsbox.engine.net.Session
+import io.rsbox.engine.net.game.Packet
 
 /**
  * Represents a player's connect client and holds the open network session associated
@@ -38,5 +39,9 @@ class Client {
     }
 
     fun flush() = session.flush()
+
+    fun write(packet: Packet) = session.write(packet)
+
+    fun writeAndFlush(packet: Packet) = session.writeAndFlush(packet)
 
 }

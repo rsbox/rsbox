@@ -13,7 +13,7 @@ class GamePacketEncoder(private val session: Session) {
         val payload = session.buffer()
         codec.encode(session, packet, payload)
 
-        val length = payload.readableBytes()
+        val length = payload.writerIndex()
 
         /*
          * Write the packet opcode with Isaac random applied.
