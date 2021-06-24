@@ -1,6 +1,6 @@
 package io.rsbox.engine.model.`interface`
 
-enum class InterfaceContainer(
+enum class RootInterface(
     val interfaceId: Int,
     val fixedChildId: Int,
     val resizeChildId: Int,
@@ -61,7 +61,23 @@ enum class InterfaceContainer(
     }
 
     companion object {
-        val values = enumValues<InterfaceContainer>()
+        val values = enumValues<RootInterface>()
+
+        fun getDisplayComponentId(displayMode: DisplayMode) = when (displayMode) {
+            DisplayMode.FIXED -> 548
+            DisplayMode.RESIZABLE_NORMAL -> 161
+            DisplayMode.RESIZABLE_LIST -> 164
+            DisplayMode.FULLSCREEN -> 165
+            else -> throw RuntimeException("Unhandled display mode.")
+        }
+
+        fun getChildId(parent: RootInterface, displayMode: DisplayMode): Int = when (displayMode) {
+            DisplayMode.FIXED -> parent.fixedChildId
+            DisplayMode.RESIZABLE_NORMAL -> parent.resizeChildId
+            DisplayMode.RESIZABLE_LIST -> parent.resizeListChildId
+            DisplayMode.FULLSCREEN -> parent.fullscreenChildId
+            else -> throw RuntimeException("Unhandled display mode.")
+        }
     }
 
 }
