@@ -67,8 +67,8 @@ object LoginProcessor {
         /*
          * Initialize the session's isaac instances with the xtea encryption keys.
          */
-        session.encodeIsaac.init(session.xteas)
-        session.decodeIsaac.init(IntArray(session.xteas.size) { session.xteas[it] + 50 })
+        session.decodeIsaac.init(session.xteas)
+        session.encodeIsaac.init(IntArray(session.xteas.size) { session.xteas[it] + 50 })
 
         /*
          * Check if the player is already online or not and register with the game world.
@@ -85,9 +85,11 @@ object LoginProcessor {
         }
 
         val response = LoginResponse(this)
-        session.write(response)
-
-        session.protocol.set(GameProtocol(session))
-        session.write(RebuildRegionNormal(this, true))
+        session.writeAndFlush(response).addListener { f ->
+            if(f.isSuccess) {
+                session.protocol.set(GameProtocol(session))
+                session.writeAndFlush(RebuildRegionNormal(this))
+            }
+        }
     }
 }

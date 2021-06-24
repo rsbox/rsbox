@@ -14,6 +14,8 @@ import io.rsbox.engine.net.Message
 import io.rsbox.engine.net.Protocol
 import io.rsbox.engine.net.ServerStatus
 import io.rsbox.engine.net.Session
+import io.rsbox.engine.net.game.GameProtocol
+import io.rsbox.engine.net.packet.outbound.RebuildRegionNormal
 import io.rsbox.engine.service.ServiceManager
 import io.rsbox.engine.service.login.LoginService
 import java.math.BigInteger
@@ -299,18 +301,14 @@ class LoginProtocol(override val session: Session) : Protocol {
             }
 
             is LoginResponse -> {
-                out.writeByte(2)
-                out.writeByte(10)
-                out.writeInt(0)
-                out.writeBoolean(false)
-                out.writeByte(3)
-                out.writeBoolean(true)
-                out.writeShort(message.player.index)
-                out.writeBoolean(true)
-
-                /*
-                 * Send the data for the player gpi.
-                 */
+                out.writeByte(2) // login opcode
+                out.writeByte(13) // length
+                out.writeBoolean(false) // isTrustedDevice
+                out.writeInt(0) // Always sent if isTrustedDevice = false
+                out.writeByte(2) // Privilege Level
+                out.writeBoolean(true) // isModerator
+                out.writeShort(message.player.index) // Player index
+                out.writeBoolean(true) // isMember
             }
         }
     }

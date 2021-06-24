@@ -28,6 +28,8 @@ class Client {
 
     var height: Int = 0
 
+    val viewport = Viewport(this)
+
     /**
      * Processed ever game server tick.
      */
