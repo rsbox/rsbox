@@ -1,7 +1,0 @@
-dependencies {
-    implementation project(":common")
-    implementation project(":engine")
-    implementation project(":cache")
-    implementation project(":config")
-    implementation project(":event")
-}

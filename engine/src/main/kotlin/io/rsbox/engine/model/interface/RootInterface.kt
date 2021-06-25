@@ -2,37 +2,35 @@ package io.rsbox.engine.model.`interface`
 
 enum class RootInterface(
     val interfaceId: Int,
-    val fixedChildId: Int,
-    val resizeChildId: Int,
-    val resizeListChildId: Int,
-    val mobileChildId: Int,
-    val fullscreenChildId: Int = -1,
-    val clickThrough: Boolean = true
+    val fixedModeChild: Int,
+    val resizableNormalChild: Int,
+    val resizableListChild: Int,
+    val mobileChild: Int,
+    val fullscreenChild: Int = -1
 ) {
-    CHAT_BOX(interfaceId = 162, fixedChildId = 27, resizeChildId = 32, resizeListChildId = 31, mobileChildId = 33, fullscreenChildId = 1),
-    USERNAME(interfaceId = 163, fixedChildId = 20, resizeChildId = 11, resizeListChildId = 9, mobileChildId = 13, fullscreenChildId = 25),
-    MINI_MAP(interfaceId = 160, fixedChildId = 11, resizeChildId = 31, resizeListChildId = 28, mobileChildId = 27, fullscreenChildId = 26),
-    XP_COUNTER(interfaceId = 122, fixedChildId = 18, resizeChildId = 8, resizeListChildId = 7, mobileChildId = 9, fullscreenChildId = 6),
-    INVENTORY(interfaceId = 149, fixedChildId = 72, resizeChildId = 74, resizeListChildId = 71, mobileChildId = 76, fullscreenChildId = 13),
-    SKILLS(interfaceId = 320, fixedChildId = 70, resizeChildId = 72, resizeListChildId = 69, mobileChildId = 74, fullscreenChildId = 11),
-    QUEST_ROOT(interfaceId = 629, fixedChildId = 71, resizeChildId = 73, resizeListChildId = 70, mobileChildId = 75, fullscreenChildId = 12),
-    EQUIPMENT(interfaceId = 387, fixedChildId = 73, resizeChildId = 75, resizeListChildId = 72, mobileChildId = 77, fullscreenChildId = 14),
-    PRAYER(interfaceId = 541, fixedChildId = 74, resizeChildId = 76, resizeListChildId = 73, mobileChildId = 78, fullscreenChildId = 15),
-    MAGIC(interfaceId = 218, fixedChildId = 75, resizeChildId = 77, resizeListChildId = 74, mobileChildId = 79, fullscreenChildId = 16),
-    ACCOUNT_MANAGEMENT(interfaceId = 109, fixedChildId = 77, resizeChildId = 79, resizeListChildId = 79, mobileChildId = 81, fullscreenChildId = 18),
-    SOCIAL(interfaceId = 429, fixedChildId = 78, resizeChildId = 80, resizeListChildId = 77, mobileChildId = 82, fullscreenChildId = 19), // 432 = ignore
-    LOG_OUT(interfaceId = 182, fixedChildId = 79, resizeChildId = 81, resizeListChildId = 78, mobileChildId = 83, fullscreenChildId = 20),
-    SETTINGS(interfaceId = 116, fixedChildId = 80, resizeChildId = 82, resizeListChildId = 79, mobileChildId = 84, fullscreenChildId = 21),
-    EMOTES(interfaceId = 216, fixedChildId = 81, resizeChildId = 83, resizeListChildId = 80, mobileChildId = 85, fullscreenChildId = 22),
-    MUSIC(interfaceId = 239, fixedChildId = 82, resizeChildId = 84, resizeListChildId = 81, mobileChildId = 86, fullscreenChildId = 23),
-    CLAN_CHAT(interfaceId = 7, fixedChildId = 76, resizeChildId = 78, resizeListChildId = 75, mobileChildId = 80, fullscreenChildId = 17),
-    ATTACK(interfaceId = 593, fixedChildId = 69, resizeChildId = 71, resizeListChildId = 68, mobileChildId = 73, fullscreenChildId = 10),
-    PVP_OVERLAY(interfaceId = -1, fixedChildId = 15, resizeChildId = 4, resizeListChildId = 4, mobileChildId = 5, fullscreenChildId = 1),
-    MAIN_SCREEN(interfaceId = -1, fixedChildId = 21, resizeChildId = 13, resizeListChildId = 13, mobileChildId = 17, fullscreenChildId = 1, clickThrough = false),
-    TAB_AREA(interfaceId = -1, fixedChildId = 64, resizeChildId = 66, resizeListChildId = 66, mobileChildId = 71, clickThrough = false),
-    WALKABLE(interfaceId = -1, fixedChildId = 14, resizeChildId = 3, resizeListChildId = 3, mobileChildId = 4),
-    WORLD_MAP(interfaceId = -1, fixedChildId = 22, resizeChildId = 14, resizeListChildId = 14, mobileChildId = 18, fullscreenChildId = 28);
-    //WORLD_MAP_FULL(interfaceId = -1, fixedChildId = 27, resizeChildId = 27, resizeListChildId = 27, mobileChildId = 27,//  fullscreenChildId = 27, clickThrough = false);
+    CHAT_BOX(interfaceId = 162, fixedModeChild = 27, resizableNormalChild = 32, resizableListChild = 31, mobileChild = 33, fullscreenChild = 1),
+    USERNAME(interfaceId = 163, fixedModeChild = 20, resizableNormalChild = 11, resizableListChild = 9, mobileChild = 13, fullscreenChild = 25),
+    MINI_MAP(interfaceId = 160, fixedModeChild = 11, resizableNormalChild = 31, resizableListChild = 28, mobileChild = 27, fullscreenChild = 26),
+    XP_COUNTER(interfaceId = 122, fixedModeChild = 18, resizableNormalChild = 8, resizableListChild = 7, mobileChild = 9, fullscreenChild = 6),
+    INVENTORY(interfaceId = 149, fixedModeChild = 72, resizableNormalChild = 74, resizableListChild = 71, mobileChild = 76, fullscreenChild = 13),
+    SKILLS(interfaceId = 320, fixedModeChild = 70, resizableNormalChild = 72, resizableListChild = 69, mobileChild = 74, fullscreenChild = 11),
+    QUEST_ROOT(interfaceId = 629, fixedModeChild = 71, resizableNormalChild = 73, resizableListChild = 70, mobileChild = 75, fullscreenChild = 12),
+    EQUIPMENT(interfaceId = 387, fixedModeChild = 73, resizableNormalChild = 75, resizableListChild = 72, mobileChild = 77, fullscreenChild = 14),
+    PRAYER(interfaceId = 541, fixedModeChild = 74, resizableNormalChild = 76, resizableListChild = 73, mobileChild = 78, fullscreenChild = 15),
+    MAGIC(interfaceId = 218, fixedModeChild = 75, resizableNormalChild = 77, resizableListChild = 74, mobileChild = 79, fullscreenChild = 16),
+    ACCOUNT_MANAGEMENT(interfaceId = 109, fixedModeChild = 77, resizableNormalChild = 79, resizableListChild = 79, mobileChild = 81, fullscreenChild = 18),
+    SOCIAL(interfaceId = 429, fixedModeChild = 78, resizableNormalChild = 80, resizableListChild = 77, mobileChild = 82, fullscreenChild = 19), // 432 = ignore
+    LOG_OUT(interfaceId = 182, fixedModeChild = 79, resizableNormalChild = 81, resizableListChild = 78, mobileChild = 83, fullscreenChild = 20),
+    SETTINGS(interfaceId = 116, fixedModeChild = 80, resizableNormalChild = 82, resizableListChild = 79, mobileChild = 84, fullscreenChild = 21),
+    EMOTES(interfaceId = 216, fixedModeChild = 81, resizableNormalChild = 83, resizableListChild = 80, mobileChild = 85, fullscreenChild = 22),
+    MUSIC(interfaceId = 239, fixedModeChild = 82, resizableNormalChild = 84, resizableListChild = 81, mobileChild = 86, fullscreenChild = 23),
+    CLAN_CHAT(interfaceId = 7, fixedModeChild = 76, resizableNormalChild = 78, resizableListChild = 75, mobileChild = 80, fullscreenChild = 17),
+    ATTACK(interfaceId = 593, fixedModeChild = 69, resizableNormalChild = 71, resizableListChild = 68, mobileChild = 73, fullscreenChild = 10),
+    PVP_OVERLAY(interfaceId = -1, fixedModeChild = 15, resizableNormalChild = 4, resizableListChild = 4, mobileChild = 5, fullscreenChild = 1),
+    MAIN_SCREEN(interfaceId = -1, fixedModeChild = 21, resizableNormalChild = 13, resizableListChild = 13, mobileChild = 17, fullscreenChild = 1),
+    TAB_AREA(interfaceId = -1, fixedModeChild = 64, resizableNormalChild = 66, resizableListChild = 66, mobileChild = 71),
+    WALKABLE(interfaceId = -1, fixedModeChild = 14, resizableNormalChild = 3, resizableListChild = 3, mobileChild = 4),
+    WORLD_MAP(interfaceId = -1, fixedModeChild = 22, resizableNormalChild = 14, resizableListChild = 14, mobileChild = 18, fullscreenChild = 28);
 
     fun isSwitchable(): Boolean = when (this) {
         CHAT_BOX,
@@ -72,10 +70,10 @@ enum class RootInterface(
         }
 
         fun getChildId(parent: RootInterface, displayMode: DisplayMode): Int = when (displayMode) {
-            DisplayMode.FIXED -> parent.fixedChildId
-            DisplayMode.RESIZABLE_NORMAL -> parent.resizeChildId
-            DisplayMode.RESIZABLE_LIST -> parent.resizeListChildId
-            DisplayMode.FULLSCREEN -> parent.fullscreenChildId
+            DisplayMode.FIXED -> parent.fixedModeChild
+            DisplayMode.RESIZABLE_NORMAL -> parent.resizableNormalChild
+            DisplayMode.RESIZABLE_LIST -> parent.resizableListChild
+            DisplayMode.FULLSCREEN -> parent.fullscreenChild
             else -> throw RuntimeException("Unhandled display mode.")
         }
     }
