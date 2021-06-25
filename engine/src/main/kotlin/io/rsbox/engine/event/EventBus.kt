@@ -25,6 +25,6 @@ fun <E : Event> event(event: E, action: (E) -> Unit) {
 }
 
 @Suppress("UNCHECKED_CAST")
-inline fun <reified E : Event> on_event(priority: EventPriority.NORMAL, noinline action: (E) -> Unit) {
+inline fun <reified E : Event> on_event(priority: EventPriority = EventPriority.NORMAL, noinline action: (E) -> Unit) {
     listenerMap.put(E::class, priority to (action as (Event) -> Unit))
 }

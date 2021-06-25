@@ -3,6 +3,8 @@ package io.rsbox.engine.service.login
 import io.rsbox.common.di.inject
 import io.rsbox.common.hash.SHA256
 import io.rsbox.config.RSBoxConfig
+import io.rsbox.engine.event.event
+import io.rsbox.engine.event.impl.PlayerLoginEvent
 import io.rsbox.engine.model.`interface`.DisplayMode
 import io.rsbox.engine.model.`interface`.RootInterface
 import io.rsbox.engine.model.entity.Player
@@ -63,8 +65,6 @@ object LoginProcessor {
     }
 
     private fun Player.login() {
-        Logger.info("Login request successful for [username: $username] with ip [address: ${client.session.remoteAddress}]")
-
         val session = this.client.session
 
         /*
@@ -96,7 +96,13 @@ object LoginProcessor {
         session.writeAndFlush(response).addListener { f ->
             if(f.isSuccess) {
                 session.protocol.set(GameProtocol(session))
-                session.writeAndFlush(RebuildRegionNormal(this, gpi = true))
+
+                /*
+                 * Fire the player login event.
+                 */
+                event(PlayerLoginEvent(this)) {
+                    Logger.info("Login request successful for [username: $username] with ip [address: ${client.session.remoteAddress}]")
+                }
             }
         }
     }

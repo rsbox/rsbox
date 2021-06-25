@@ -61,20 +61,12 @@ enum class RootInterface(
     companion object {
         val values = enumValues<RootInterface>()
 
-        fun getDisplayComponentId(displayMode: DisplayMode) = when (displayMode) {
-            DisplayMode.FIXED -> 548
-            DisplayMode.RESIZABLE_NORMAL -> 161
-            DisplayMode.RESIZABLE_LIST -> 164
-            DisplayMode.FULLSCREEN -> 165
-            else -> throw RuntimeException("Unhandled display mode.")
-        }
-
-        fun getChildId(parent: RootInterface, displayMode: DisplayMode): Int = when (displayMode) {
-            DisplayMode.FIXED -> parent.fixedModeChild
-            DisplayMode.RESIZABLE_NORMAL -> parent.resizableNormalChild
-            DisplayMode.RESIZABLE_LIST -> parent.resizableListChild
-            DisplayMode.FULLSCREEN -> parent.fullscreenChild
-            else -> throw RuntimeException("Unhandled display mode.")
+        fun RootInterface.child(displayMode: DisplayMode): Int = when(displayMode) {
+            DisplayMode.FIXED -> this.fixedModeChild
+            DisplayMode.RESIZABLE_NORMAL -> this.resizableNormalChild
+            DisplayMode.RESIZABLE_LIST -> this.resizableListChild
+            DisplayMode.MOBILE -> this.mobileChild
+            DisplayMode.FULLSCREEN -> this.mobileChild
         }
     }
 
