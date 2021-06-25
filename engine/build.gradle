@@ -11,4 +11,5 @@ dependencies {
     implementation "io.netty:netty-all:_"
     implementation "io.github.classgraph:classgraph:_"
     implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:_"
+    implementation "com.google.guava:guava:_"
 }
