@@ -6,6 +6,7 @@ run {
     group = 'rsbox'
     workingDir = rootProject.projectDir
     mainClassName = "io.rsbox.launcher.Launcher"
+    systemProperty 'pf4j.pluginsDir', '../data/content/'
 }
 
 dependencies {
@@ -13,4 +14,22 @@ dependencies {
     implementation project(":cache")
     implementation project(":config")
     implementation project(":engine")
+}
+
+task serverJar(type: Jar, dependsOn: ['compileJava']) {
+    group = "rsbox"
+    zip64 true
+    from configurations.runtimeClasspath.asFileTree.files.collect {
+        exclude "META-INF/*.SF"
+        exclude "META-INF/*.DSA"
+        exclude "META-INF/*.RSA"
+        zipTree(it)
+    }
+    from files(sourceSets.main.output.classesDirs)
+    from files(sourceSets.main.resources)
+    manifest {
+        attributes 'Main-Class': mainClassName
+    }
+    archiveBaseName = "${project.name}-server"
+    archiveClassifier = ""
 }

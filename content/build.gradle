@@ -1,0 +1,45 @@
+ext.contentDir = rootProject.projectDir.path + '/data/content'
+
+subprojects {
+    apply plugin: 'org.jetbrains.kotlin.kapt'
+
+    jar {
+        manifest {
+            attributes  'Plugin-Class': "${contentMain}",
+                        'Plugin-Id': "${contentId}",
+                        'Plugin-Version': "${archiveVersion}",
+                        'Plugin-Provider': "${contentProvider}"
+        }
+    }
+
+    dependencies {
+        compileOnly 'org.pf4j:pf4j:_'
+        kapt 'org.pf4j:pf4j:_'
+        compileOnly project(":common")
+        compileOnly project(":api")
+        compileOnly project(":engine")
+        compileOnly project(":content")
+    }
+
+    task compileContent(type: Jar) {
+        archiveBaseName = "content-${contentId}"
+        into('classes') {
+            with jar
+        }
+        into('lib') {
+            from configurations.compile
+        }
+        archiveExtension = 'jar'
+    }
+
+    task assembleContent(type: Copy) {
+        from compileContent
+        into contentDir
+    }
+}
+
+task assembleContent(type: Copy) {
+    dependsOn subprojects.assembleContent
+}
+
+build.dependsOn project.tasks.assembleContent
