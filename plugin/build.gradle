@@ -1,0 +1,53 @@
+ext.pluginsDir = rootProject.projectDir.path + '/data/plugins'
+
+dependencies {
+    compileOnly project(":api")
+    compileOnly project(":engine")
+    compileOnly "org.pf4j:pf4j:_"
+}
+
+subprojects {
+    apply plugin: 'org.jetbrains.kotlin.kapt'
+
+    def props = new Properties()
+    file("plugin.properties").withInputStream { props.load(it) }
+
+    jar {
+        manifest {
+            attributes  'Plugin-Class': "${props.getProperty("plugin.main")}",
+                        'Plugin-Id': "${props.getProperty("plugin.id")}",
+                        'Plugin-Version': "${props.getProperty("plugin.version")}",
+                        'Plugin-Provider': "${props.getProperty("plugin.provider")}"
+        }
+    }
+
+    task plugin(type: Jar) {
+        archiveBaseName = "plugin-${props.getProperty("plugin.id")}"
+        into('classes') {
+            with jar
+        }
+        into('lib') {
+            from configurations.compile
+        }
+        archiveExtension = 'jar'
+    }
+
+    task assemblePlugin(type: Copy) {
+        group = "rsbox"
+        from plugin
+        into pluginsDir
+    }
+
+    dependencies {
+        compileOnly project(":api")
+        compileOnly project(":engine")
+        kapt "org.pf4j:pf4j:_"
+        compileOnly "org.pf4j:pf4j:_"
+    }
+}
+
+task assemblePlugins(type: Copy) {
+    dependsOn subprojects.assemblePlugin
+}
+
+build.dependsOn project.tasks.assemblePlugins
