@@ -12,15 +12,16 @@ include ':launcher'
 include ':engine'
 include ':config'
 include ':api'
-include ':content'
+include ':plugin'
 
-def contentPath = project(":content").projectDir.toPath()
-Files.walk(contentPath).forEach { path ->
+def pluginsPath = project(":plugin").projectDir.toPath()
+
+Files.walk(pluginsPath).forEach { path ->
     if(!Files.isDirectory(path)) return
     if(!Files.exists(path.resolve("build.gradle"))) return
 
-    def relativePath = contentPath.relativize(path)
-    def moduleName = relativePath.toString().replace(File.separator, ":")
+    def relativeName = pluginsPath.relativize(path)
+    def moduleName = relativeName.toString().replace(File.separator, ":")
 
-    include("content:$moduleName")
+    include("plugin:$moduleName")
 }

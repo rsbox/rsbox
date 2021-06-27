@@ -11,6 +11,9 @@ import io.rsbox.config.RSBoxConfig
 import io.rsbox.engine.Engine
 import io.rsbox.engine.EngineModule
 import io.rsbox.engine.net.NetworkModule
+import io.rsbox.engine.net.NetworkServer
+import io.rsbox.plugin.PluginManager
+import io.rsbox.plugin.PluginModule
 import org.koin.core.context.startKoin
 import org.tinylog.kotlin.Logger
 import java.io.File
@@ -21,6 +24,8 @@ class Launcher {
     private val gameCache: GameCache by inject()
     private val engine: Engine by inject()
     private val rsa: RSA by inject()
+    private val networkServer: NetworkServer by inject()
+    private val pluginManager: PluginManager by inject()
 
     fun launch() {
         /*
@@ -52,6 +57,16 @@ class Launcher {
          * Start the game engine.
          */
         engine.start()
+
+        /*
+         * Start the RSBox content plugins.
+         */
+        pluginManager.startAll()
+
+        /*
+         * Start the networking server
+         */
+        networkServer.start()
     }
 
     private fun initDirs() {
@@ -65,7 +80,7 @@ class Launcher {
             "data/logs/",
             "data/xteas/",
             "data/configs/",
-            "data/content/"
+            "data/plugins/"
         ).map { File(it) }.forEach { dir ->
             if(!dir.exists()) {
                 Logger.info("Creating missing directory: ${dir.path}")
@@ -108,7 +123,8 @@ class Launcher {
                     ConfigModule,
                     EngineModule,
                     NetworkModule,
-                    CommonModule
+                    CommonModule,
+                    PluginModule
                 )
             }
         }

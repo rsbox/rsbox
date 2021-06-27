@@ -23,7 +23,12 @@ object PacketRegistry {
 
     @Suppress("UNCHECKED_CAST")
     private fun registerOutboundPackets() {
-        val scan = ClassGraph().enableAllInfo().scan().getClassesWithAnnotation(OutboundPacket::class.qualifiedName)
+        val scan = ClassGraph()
+            .enableAllInfo()
+            .acceptPackages("io.rsbox.engine.net.packet.outbound")
+            .scan()
+            .getClassesWithAnnotation(OutboundPacket::class.qualifiedName)
+
         scan.forEach { classInfo ->
             val annotation = classInfo.getAnnotationInfo(OutboundPacket::class.qualifiedName).loadClassAndInstantiate() as OutboundPacket
             val opcode = annotation.opcode
@@ -45,7 +50,12 @@ object PacketRegistry {
 
     @Suppress("UNCHECKED_CAST")
     private fun registerInboundPackets() {
-        val scan = ClassGraph().enableAllInfo().scan().getClassesWithAnnotation(InboundPacket::class.qualifiedName)
+        val scan = ClassGraph()
+            .enableAllInfo()
+            .acceptPackages("io.rsbox.engine.net.packet.inbound")
+            .scan()
+            .getClassesWithAnnotation(InboundPacket::class.qualifiedName)
+
         scan.forEach { classInfo ->
             val annotation = classInfo.getAnnotationInfo(InboundPacket::class.qualifiedName).loadClassAndInstantiate() as InboundPacket
             val opcode = annotation.opcode

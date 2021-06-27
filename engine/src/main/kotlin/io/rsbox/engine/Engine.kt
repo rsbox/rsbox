@@ -21,7 +21,6 @@ import kotlin.system.measureTimeMillis
  */
 class Engine  {
 
-    private val networkServer: NetworkServer by inject()
     private val serviceManager: ServiceManager by inject()
     private val world: World by inject()
 
@@ -62,11 +61,6 @@ class Engine  {
         serviceManager.startServices()
 
         /*
-         * Start the networking server
-         */
-        networkServer.start()
-
-        /*
          * Start the game loop.
          */
         gameCoroutineScope.start(CYCLE_MILLIS)
@@ -85,11 +79,6 @@ class Engine  {
          * Stop all engine services
          */
         serviceManager.stopServices()
-
-        /*
-         * Shutdown the networking server
-         */
-        networkServer.shutdown()
 
         Logger.info("Engine has completed shutdown procedure successfully.")
     }
