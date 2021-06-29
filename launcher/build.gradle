@@ -7,7 +7,7 @@ run {
     group = 'rsbox'
     workingDir = rootProject.projectDir
     mainClassName = "io.rsbox.launcher.Launcher"
-    systemProperty 'pf4j.pluginsDir', '../../data/plugins'
+    systemProperty 'pf4j.pluginsDir', 'data/plugins'
 }
 
 dependencies {
@@ -21,9 +21,9 @@ dependencies {
     kapt "org.pf4j:pf4j:_"
 }
 
-task fatJar(type: Jar, dependsOn: ['compileKotlin']) {
+task fatjar(type: Jar, dependsOn: ['compileKotlin']) {
     zip64 true
-    from configurations.runtimeClasspath.asFileTree.collect {
+    from configurations.runtimeClasspath.asFileTree.files.collect {
         exclude "META-INF/*.SF"
         exclude "META-INF/*.DSA"
         exclude "META-INF/*.RSA"
@@ -34,10 +34,9 @@ task fatJar(type: Jar, dependsOn: ['compileKotlin']) {
     manifest {
         attributes 'Main-Class': mainClassName
     }
-    archiveBaseName = "${project.name}-plugin"
-    archiveClassifier = ""
+
+    archiveClassifier = "fatjar"
 }
 
-task buildServer(dependsOn: [':launcher:fatJar']) {
-    group = "rsbox"
-}
+build.dependsOn tasks.fatjar
+run.dependsOn tasks.build

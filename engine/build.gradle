@@ -3,13 +3,13 @@ plugins {
 }
 
 dependencies {
-    implementation project(":common")
-    implementation project(":cache")
-    implementation project(":config")
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:_"
-    implementation "com.google.guava:guava:_"
-    implementation "io.netty:netty-all:_"
-    implementation "io.github.classgraph:classgraph:_"
-    implementation "org.jetbrains.kotlinx:kotlinx-serialization-json:_"
-    implementation "com.google.guava:guava:_"
+    api project(":common")
+    api project(":cache")
+    api project(":config")
+    api "org.jetbrains.kotlinx:kotlinx-coroutines-core:_"
+    api "com.google.guava:guava:_"
+    api "io.netty:netty-all:_"
+    api "io.github.classgraph:classgraph:_"
+    api "org.jetbrains.kotlinx:kotlinx-serialization-json:_"
+    api "com.google.guava:guava:_"
 }

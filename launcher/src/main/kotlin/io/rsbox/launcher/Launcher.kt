@@ -61,7 +61,7 @@ class Launcher {
         /*
          * Start the RSBox content plugins.
          */
-        pluginManager.startAll()
+        pluginManager.loadAllPlugins()
 
         /*
          * Start the networking server

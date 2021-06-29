@@ -1,6 +1,9 @@
 package io.rsbox.engine.model.`interface`
 
+import io.rsbox.engine.model.`interface`.RootInterface.Companion.child
 import io.rsbox.engine.model.entity.Client
+import io.rsbox.engine.net.packet.outbound.IfOpenSub
+import io.rsbox.engine.net.packet.outbound.IfOpenTop
 
 class InterfaceManager(val client: Client) {
 
@@ -43,4 +46,28 @@ class InterfaceManager(val client: Client) {
 
     private fun getInterfaceAt(parent: Int, child: Int): Int = interfaces.getOrDefault((parent shl 16) or child, -1)
 
+    fun openTopInterface(displayMode: DisplayMode) {
+        val component = displayMode.component
+        setVisible(component, 0, true)
+        client.write(IfOpenTop(component))
+    }
+
+    fun openInterface(parent: Int, child: Int, interfaceId: Int, type: Int = 0, isModal: Boolean = false) {
+        if(isModal) {
+            openModal(parent, child, interfaceId)
+        } else {
+            open(parent, child, interfaceId)
+        }
+        client.write(IfOpenSub(parent, child, interfaceId, type))
+    }
+
+    fun openInterface(interfaceId: Int, root: RootInterface, fullscreen: Boolean = false) {
+        val displayMode = if(!fullscreen || root.fullscreenChild == -1) client.displayMode else DisplayMode.FULLSCREEN
+        val child = root.child(displayMode)
+        val parent = displayMode.component
+        if(displayMode == DisplayMode.FULLSCREEN) {
+            openTopInterface(displayMode)
+        }
+        openInterface(parent, child, interfaceId, 0, isModal = root == RootInterface.MAIN_SCREEN)
+    }
 }

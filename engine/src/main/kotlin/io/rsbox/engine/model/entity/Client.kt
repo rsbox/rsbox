@@ -33,8 +33,6 @@ class Client {
 
     var displayMode: DisplayMode = DisplayMode.FIXED
 
-    val interfaces = InterfaceManager(this)
-
     val viewport = Viewport(this)
 
     /**
