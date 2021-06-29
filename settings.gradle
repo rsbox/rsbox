@@ -1,5 +1,3 @@
-import java.nio.file.Files
-
 plugins {
     id 'de.fayard.refreshVersions' version '0.10.1'
 }
@@ -12,16 +10,3 @@ include ':launcher'
 include ':engine'
 include ':config'
 include ':api'
-include ':plugin'
-
-def pluginsPath = project(":plugin").projectDir.toPath()
-
-Files.walk(pluginsPath).forEach { path ->
-    if(!Files.isDirectory(path)) return
-    if(!Files.exists(path.resolve("build.gradle"))) return
-
-    def relativeName = pluginsPath.relativize(path)
-    def moduleName = relativeName.toString().replace(File.separator, ":")
-
-    include("plugin:$moduleName")
-}
