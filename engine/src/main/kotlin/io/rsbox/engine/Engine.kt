@@ -8,11 +8,13 @@ import io.rsbox.engine.module.XteaProvider
 import io.rsbox.engine.service.ServiceManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.asCoroutineDispatcher
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.tinylog.kotlin.Logger
 import java.io.File
 import java.util.concurrent.Executors
 import kotlin.math.abs
+import kotlin.math.max
 import kotlin.system.measureTimeMillis
 
 /**
@@ -97,6 +99,7 @@ class Engine  {
             if(remainingTime < 0) {
                 Logger.warn("Game cycle took ${abs(elapsedTime) + interval}ms / 600ms. Server is overloaded.")
             }
+            delay(max(1, remainingTime))
         }
     }
 
