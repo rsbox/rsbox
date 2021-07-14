@@ -1,4 +1,4 @@
-package io.rsbox.cache
+package io.rsbox.cache.old
 
 import io.guthix.js5.Js5Cache
 import io.guthix.js5.container.Js5Container

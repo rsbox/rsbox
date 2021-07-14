@@ -1,4 +1,4 @@
-package io.rsbox.cache
+package io.rsbox.cache.old
 
 import org.koin.dsl.module
 

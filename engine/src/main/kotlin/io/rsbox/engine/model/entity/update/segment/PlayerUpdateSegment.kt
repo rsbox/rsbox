@@ -1,7 +1,6 @@
 package io.rsbox.engine.model.entity.update.segment
 
 import io.guthix.buffer.writeBytesAdd
-import io.guthix.buffer.writeString0CP1252
 import io.guthix.buffer.writeStringCP1252
 import io.netty.buffer.ByteBuf
 import io.netty.buffer.Unpooled
@@ -16,7 +15,7 @@ class PlayerUpdateSegment(private val player: Player, private val isNewPlayer: B
 
     companion object {
         private val translation = arrayOf(-1, -1, -1, -1, 2, -1, 3, 5, 0, 4, 6, 1)
-        private val idleAnimations = intArrayOf(808, 823, 819, 820, 821, 822, 824)
+        private val animations = intArrayOf(808, 823, 819, 820, 821, 822, 824)
 
         private const val ARMS = 6
         private const val HAIR = 8
@@ -118,7 +117,7 @@ class PlayerUpdateSegment(private val player: Player, private val isNewPlayer: B
                 /*
                  * Idle animations
                  */
-                idleAnimations.forEach { animation ->
+                animations.forEach { animation ->
                     appBuf.writeShort(animation)
                 }
 

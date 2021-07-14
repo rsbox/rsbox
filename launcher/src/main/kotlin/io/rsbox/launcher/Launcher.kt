@@ -2,8 +2,8 @@ package io.rsbox.launcher
 
 import io.rsbox.api.ApiModule
 import io.rsbox.api.plugin.PluginManager
-import io.rsbox.cache.CacheModule
-import io.rsbox.cache.GameCache
+import io.rsbox.cache.old.CacheModule
+import io.rsbox.cache.old.GameCache
 import io.rsbox.common.CommonModule
 import io.rsbox.common.di.get
 import io.rsbox.common.di.inject

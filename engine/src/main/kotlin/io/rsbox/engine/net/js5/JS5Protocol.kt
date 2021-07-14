@@ -1,7 +1,7 @@
 package io.rsbox.engine.net.js5
 
 import io.netty.buffer.ByteBuf
-import io.rsbox.cache.GameCache
+import io.rsbox.cache.old.GameCache
 import io.rsbox.common.di.inject
 import io.rsbox.engine.net.Message
 import io.rsbox.engine.net.Protocol
