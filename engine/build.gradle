@@ -12,4 +12,5 @@ dependencies {
     api "io.github.classgraph:classgraph:_"
     api "org.jetbrains.kotlinx:kotlinx-serialization-json:_"
     api "com.google.guava:guava:_"
+    api "it.unimi.dsi:fastutil:_"
 }

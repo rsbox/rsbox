@@ -16,5 +16,9 @@ enum class DisplayMode(val id: Int, val component: Int) {
 
     companion object {
         val values = enumValues<DisplayMode>()
+
+        fun fromId(id: Int): DisplayMode {
+            return values.firstOrNull { it.id == id } ?: throw IllegalArgumentException("Unknown display mode with ID: $id.")
+        }
     }
 }

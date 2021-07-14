@@ -6,7 +6,8 @@ enum class TopInterfaceType(
     val resizableNormalChild: Int,
     val resizableListChild: Int,
     val mobileChild: Int,
-    val fullscreenChild: Int = -1
+    val fullscreenChild: Int = -1,
+    val clickThrough: Boolean = true
 ) {
     CHAT_BOX(interfaceId = 162, fixedModeChild = 27, resizableNormalChild = 32, resizableListChild = 31, mobileChild = 33, fullscreenChild = 1),
     USERNAME(interfaceId = 163, fixedModeChild = 20, resizableNormalChild = 11, resizableListChild = 9, mobileChild = 13, fullscreenChild = 25),
@@ -26,9 +27,8 @@ enum class TopInterfaceType(
     MUSIC(interfaceId = 239, fixedModeChild = 82, resizableNormalChild = 84, resizableListChild = 81, mobileChild = 86, fullscreenChild = 23),
     CLAN_CHAT(interfaceId = 7, fixedModeChild = 76, resizableNormalChild = 78, resizableListChild = 75, mobileChild = 80, fullscreenChild = 17),
     ATTACK(interfaceId = 593, fixedModeChild = 69, resizableNormalChild = 71, resizableListChild = 68, mobileChild = 73, fullscreenChild = 10),
-    PVP_OVERLAY(interfaceId = -1, fixedModeChild = 15, resizableNormalChild = 4, resizableListChild = 4, mobileChild = 5, fullscreenChild = 1),
-    MAIN_SCREEN(interfaceId = -1, fixedModeChild = 21, resizableNormalChild = 13, resizableListChild = 13, mobileChild = 17, fullscreenChild = 1),
-    TAB_AREA(interfaceId = -1, fixedModeChild = 64, resizableNormalChild = 66, resizableListChild = 66, mobileChild = 71),
+    MAIN_SCREEN(interfaceId = -1, fixedModeChild = 21, resizableNormalChild = 13, resizableListChild = 13, mobileChild = 17, clickThrough = false),
+    TAB_AREA(interfaceId = -1, fixedModeChild = 64, resizableNormalChild = 66, resizableListChild = 66, mobileChild = 71, clickThrough = false),
     WALKABLE(interfaceId = -1, fixedModeChild = 14, resizableNormalChild = 3, resizableListChild = 3, mobileChild = 4),
     WORLD_MAP(interfaceId = -1, fixedModeChild = 22, resizableNormalChild = 14, resizableListChild = 14, mobileChild = 18, fullscreenChild = 28);
 
@@ -51,11 +51,11 @@ enum class TopInterfaceType(
         SETTINGS,
         EMOTES,
         MUSIC,
-        PVP_OVERLAY,
         USERNAME,
         MINI_MAP,
         XP_COUNTER,
         WORLD_MAP -> true
+        else -> false
     }
 
     companion object {
@@ -66,7 +66,7 @@ enum class TopInterfaceType(
             DisplayMode.RESIZABLE_NORMAL -> this.resizableNormalChild
             DisplayMode.RESIZABLE_LIST -> this.resizableListChild
             DisplayMode.MOBILE -> this.mobileChild
-            DisplayMode.FULLSCREEN -> this.mobileChild
+            DisplayMode.FULLSCREEN -> this.fullscreenChild
         }
     }
 

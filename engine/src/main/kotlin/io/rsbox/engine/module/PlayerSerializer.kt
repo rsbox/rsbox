@@ -7,7 +7,10 @@ import io.rsbox.common.di.inject
 import io.rsbox.common.hash.SHA256
 import io.rsbox.config.RSBoxConfig
 import io.rsbox.engine.model.Tile
+import io.rsbox.engine.model.`interface`.DisplayMode
+import io.rsbox.engine.model.entity.Appearance
 import io.rsbox.engine.model.entity.Client
+import io.rsbox.engine.model.entity.Gender
 import io.rsbox.engine.model.entity.Player
 import io.rsbox.engine.net.login.LoginRequest
 import org.tinylog.kotlin.Logger
@@ -40,6 +43,8 @@ object PlayerSerializer {
         player.displayName = request.username.sanitize()
         player.homeTile = defaultHomeTile
         player.tile = defaultHomeTile
+        player.appearance = Appearance.DEFAULT
+        client.displayMode = DisplayMode.FIXED
 
         /*
          * Create the player save file.
@@ -63,6 +68,14 @@ object PlayerSerializer {
         config[PlayerSpec.Tile.x] = player.tile.x
         config[PlayerSpec.Tile.y] = player.tile.y
         config[PlayerSpec.Tile.level] = player.tile.level
+        config[PlayerSpec.displayMode] = player.client.displayMode.id
+
+        /*
+         * Appearance
+         */
+        config[PlayerSpec.Appearance.models] = player.appearance.models
+        config[PlayerSpec.Appearance.colors] = player.appearance.colors
+        config[PlayerSpec.Appearance.gender] = player.appearance.gender.id
 
         config.toJson.toFile(file)
     }
@@ -83,6 +96,16 @@ object PlayerSerializer {
         player.displayName = config[PlayerSpec.displayName]
         player.tile = Tile(config[PlayerSpec.Tile.x], config[PlayerSpec.Tile.y], config[PlayerSpec.Tile.level])
         player.homeTile = Tile(config[PlayerSpec.HomeTile.x], config[PlayerSpec.HomeTile.y], config[PlayerSpec.HomeTile.level])
+        client.displayMode = DisplayMode.fromId(config[PlayerSpec.displayMode])
+
+        /*
+         * Appearance loading.
+         */
+        player.appearance = Appearance(
+            models = config[PlayerSpec.Appearance.models],
+            colors = config[PlayerSpec.Appearance.colors],
+            gender = Gender.fromId(config[PlayerSpec.Appearance.gender])
+        )
 
         return player
     }
@@ -104,6 +127,13 @@ object PlayerSerializer {
         val username by required<String>("username")
         val password by required<String>("password")
         val displayName by required<String>("display-name")
+        val displayMode by required<Int>("display-mode")
+
+        object Appearance : ConfigSpec("appearance") {
+            val models by required<IntArray>("models")
+            val colors by required<IntArray>("colors")
+            val gender by required<Int>("gender")
+        }
 
         object Tile : ConfigSpec("tile") {
             val x by required<Int>("x")

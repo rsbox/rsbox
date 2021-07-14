@@ -9,16 +9,21 @@ import io.rsbox.engine.model.entity.Player
  * @receiver Player
  */
 fun Player.onLogin() {
-   /*
-    * Open the root interface for the current display mode of
-    * the player.
-    */
-    this.interfaces.openTopInterface(this.client.displayMode)
+    /*
+     * Open the root interface for the player's current display mode.
+     */
+    this.interfaces.openTopInterface()
 
     /*
-     * Open each top / root component interface for the player.
+     * Open each other top interface type for the player.
      */
     TopInterfaceType.values.filter { it.interfaceId != -1 }.forEach { top ->
+        if(top == TopInterfaceType.XP_COUNTER) {
+            return@forEach
+        } else if(top == TopInterfaceType.MINI_MAP) {
+            return@forEach
+        }
+
         this.interfaces.openInterface(top.interfaceId, top)
     }
 }
