@@ -2,10 +2,7 @@ package io.rsbox.engine.model.entity
 
 import io.netty.buffer.Unpooled
 import io.rsbox.engine.model.entity.update.UpdateSegment
-import io.rsbox.engine.model.entity.update.segment.AddLocalPlayerSegment
-import io.rsbox.engine.model.entity.update.segment.PlayerSkipCountSegment
-import io.rsbox.engine.model.entity.update.segment.PlayerTileHashSegment
-import io.rsbox.engine.model.entity.update.segment.RemoveLocalPlayerSegment
+import io.rsbox.engine.model.entity.update.segment.*
 import io.rsbox.engine.net.packet.outbound.PlayerUpdate
 
 class Viewport(val client: Client) {
@@ -83,10 +80,13 @@ class Viewport(val client: Client) {
          * Buffers
          */
         var buf = Unpooled.buffer()
-        val maskBuf = Unpooled.buffer()
+        var maskBuf = Unpooled.buffer()
 
         for(segment in segments) {
-            buf = segment.encode(buf)
+            when(segment) {
+                is PlayerUpdateSegment -> maskBuf = segment.encode(maskBuf)
+                else -> buf = segment.encode(buf)
+            }
         }
 
         val maskBytes = ByteArray(maskBuf.readableBytes())
@@ -166,30 +166,36 @@ class Viewport(val client: Client) {
                 continue
             }
 
-            /*
-             * Else movement case
-             */
-            for(j in i + 1 until gpiLocalPlayerCount) {
-                val nextIndex = gpiLocalPlayerIndexes[j]
-                val nextPlayer = gpiLocalPlayers[nextIndex]
-
-                val skipNext = when(inital) {
-                    true -> (gpiPlayerSkipFlags[nextIndex] and 0x1) != 0
-                    else -> (gpiPlayerSkipFlags[nextIndex] and 0x1) == 0
-                }
-
-                if(skipNext) {
-                    continue
-                }
-
-                if(nextPlayer == null || nextPlayer != client.player && shouldUnrender(nextPlayer)) {
-                    break
-                }
-                skipCount++
+            val requiresUpdateSegment = player.updates.hasUpdates()
+            if(requiresUpdateSegment) {
+                segments.add(PlayerUpdateSegment(player, isNewPlayer = false))
             }
 
-            segments.add(PlayerSkipCountSegment(skipCount))
-            gpiPlayerSkipFlags[index] = gpiPlayerSkipFlags[index] or 0x2
+            if(requiresUpdateSegment) {
+                segments.add(SignalPlayerUpdateSegment())
+            } else {
+                for(j in i + 1 until gpiLocalPlayerCount) {
+                    val nextIndex = gpiLocalPlayerIndexes[j]
+                    val nextPlayer = gpiLocalPlayers[nextIndex]
+
+                    val skipNext = when(inital) {
+                        true -> (gpiPlayerSkipFlags[nextIndex] and 0x1) != 0
+                        else -> (gpiPlayerSkipFlags[nextIndex] and 0x1) == 0
+                    }
+
+                    if(skipNext) {
+                        continue
+                    }
+
+                    if(nextPlayer == null || nextPlayer != client.player && shouldUnrender(nextPlayer)) {
+                        break
+                    }
+                    skipCount++
+                }
+
+                segments.add(PlayerSkipCountSegment(skipCount))
+                gpiPlayerSkipFlags[index] = gpiPlayerSkipFlags[index] or 0x2
+            }
         }
 
         if(skipCount > 0) {
@@ -228,6 +234,7 @@ class Viewport(val client: Client) {
                 val tileHashSegment = if(lastTileHash != currentTileHash) PlayerTileHashSegment(lastTileHash, currentTileHash) else null
 
                 segments.add(AddLocalPlayerSegment(externalPlayer, tileHashSegment))
+                segments.add(PlayerUpdateSegment(externalPlayer, isNewPlayer = true))
 
                 gpiPlayerSkipFlags[index] = gpiPlayerSkipFlags[index] or 0x2
                 gpiTileHashes[index] = currentTileHash

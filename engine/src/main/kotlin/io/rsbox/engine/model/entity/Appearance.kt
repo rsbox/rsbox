@@ -4,9 +4,9 @@ data class Appearance(val models: IntArray, val colors: IntArray, val gender: Ge
 
     companion object {
 
-        private val DEFAULT_MODELS = intArrayOf(9, 14, 109, 26, 33, 36, 42)
+        private val DEFAULT_MODELS = intArrayOf(0, 10, 18, 26, 33, 36, 42)
 
-        private val DEFAULT_COLORS = intArrayOf(0, 3, 2, 0, 0)
+        private val DEFAULT_COLORS = intArrayOf(0, 2, 4, 5, 6)
 
         val DEFAULT = Appearance(DEFAULT_MODELS, DEFAULT_COLORS, Gender.MALE)
 

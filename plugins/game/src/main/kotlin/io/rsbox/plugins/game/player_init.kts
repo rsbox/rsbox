@@ -1,8 +1,6 @@
 import io.rsbox.engine.event.impl.PlayerLoginEvent
 import io.rsbox.engine.event.on_event
-import io.rsbox.engine.model.entity.Player
 import io.rsbox.plugins.game.onLogin
-import org.tinylog.kotlin.Logger
 
 on_enable {
     /*

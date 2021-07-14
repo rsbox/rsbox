@@ -2,6 +2,7 @@ package io.rsbox.plugins.game
 
 import io.rsbox.engine.model.`interface`.TopInterfaceType
 import io.rsbox.engine.model.entity.Player
+import io.rsbox.engine.model.entity.update.UpdateType
 
 /**
  * Invoked when the player has a successful login to the world.
@@ -9,6 +10,8 @@ import io.rsbox.engine.model.entity.Player
  * @receiver Player
  */
 fun Player.onLogin() {
+    this.updates.addUpdate(UpdateType.APPEARANCE)
+
     /*
      * Open the root interface for the player's current display mode.
      */
