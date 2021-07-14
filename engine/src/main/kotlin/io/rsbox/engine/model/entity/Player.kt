@@ -28,6 +28,12 @@ class Player(val client: Client) : LivingEntity() {
      */
     var homeTile: Tile = Tile(0, 0, 0)
 
+    var skullIcon = -1
+
+    var prayerIcon = -1
+
+    var combatLevel = 3
+
     fun isOnline(): Boolean = world.players.contains(this)
 
     fun isOffline(): Boolean = !isOnline()

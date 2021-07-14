@@ -30,6 +30,8 @@ class Tile(val packed: Int) {
 
     fun translateLevel(offset: Int) = translate(0, 0, offset)
 
+    fun translate(direction: Direction, count: Int = 1): Tile = Tile(x + (count * direction.deltaX), y + (count * direction.deltaY), level)
+
     operator fun minus(other: Tile): Tile {
         return translate(-other.x, -other.y)
     }
