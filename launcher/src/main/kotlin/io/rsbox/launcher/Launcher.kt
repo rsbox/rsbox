@@ -2,6 +2,7 @@ package io.rsbox.launcher
 
 import io.rsbox.api.ApiModule
 import io.rsbox.api.plugin.PluginManager
+import io.rsbox.cache.disk.FileStore
 import io.rsbox.cache.old.CacheModule
 import io.rsbox.cache.old.GameCache
 import io.rsbox.common.CommonModule
@@ -17,6 +18,8 @@ import io.rsbox.engine.net.NetworkServer
 import org.koin.core.context.startKoin
 import org.tinylog.kotlin.Logger
 import java.io.File
+import java.nio.file.Paths
+import kotlin.system.exitProcess
 
 class Launcher {
 
@@ -43,6 +46,8 @@ class Launcher {
          */
         this.loadConfigs()
 
+        this.test()
+
         /*
          * Init game cache files.
          */
@@ -67,6 +72,12 @@ class Launcher {
          * Start the networking server
          */
         networkServer.start()
+    }
+
+    private fun test() {
+        val fileStore = FileStore.open(Paths.get("data/cache/"))
+        println("Loaded ${fileStore.archiveCount} archives from filestore")
+        exitProcess(0)
     }
 
     private fun initDirs() {
