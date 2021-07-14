@@ -1,6 +1,10 @@
 package io.rsbox.cache
 
-class Cache {
+import io.rsbox.cache.disk.FileStore
+
+class Cache private constructor(private val fileStore: FileStore) {
+
+
 
     companion object {
         /**
@@ -17,5 +21,14 @@ class Cache {
          * The Master archive / master index id appended to the idx file.
          */
         const val MASTER_ARCHIVE = 255
+
+        /**
+         * Loads the cache model structure from the data that has been loaded into a provided
+         * cache file store.
+         *
+         * @param fileStore FileStore
+         * @return Cache
+         */
+        fun load(fileStore: FileStore): Cache = Cache(fileStore)
     }
 }
