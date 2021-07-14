@@ -4,6 +4,7 @@ import java.io.OutputStream
 import java.nio.ByteBuffer
 import java.nio.IntBuffer
 import java.nio.ShortBuffer
+import java.util.zip.CRC32
 
 val ByteBuffer.medium: Int get() {
     return (this.short.toInt() shl 8) or (this.get().toInt() and 0xFF)
@@ -48,6 +49,12 @@ fun ByteBuffer.toByteArray(length: Int): ByteArray {
     val bytes = ByteArray(length)
     this.get(bytes)
     return bytes
+}
+
+fun ByteBuffer.crc32(): Int {
+    val crc = CRC32()
+    crc.update(this)
+    return crc.value.toInt()
 }
 
 fun merge(vararg bufs: ByteBuffer): ByteBuffer {
