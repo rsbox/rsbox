@@ -39,4 +39,18 @@ class Player(val client: Client) : LivingEntity() {
      */
     var appearance = Appearance.DEFAULT
 
+    override fun preCycle() {
+        client.session.cycle()
+    }
+
+    override fun cycle() {
+        /*
+         * Update the players for this player's viewport.
+         */
+        client.viewport.updatePlayer()
+    }
+
+    override fun postCycle() {
+        client.session.flush()
+    }
 }

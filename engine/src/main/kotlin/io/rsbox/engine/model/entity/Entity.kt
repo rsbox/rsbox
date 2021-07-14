@@ -27,4 +27,10 @@ abstract class Entity {
      */
     var tile: Tile = Tile(0, 0, 0)
 
+    abstract fun preCycle()
+
+    abstract fun cycle()
+
+    abstract fun postCycle()
+
 }

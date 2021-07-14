@@ -39,5 +39,11 @@ class RenderRegion(private val packed: Int) {
     companion object {
         const val SIZE = 104
         const val REBUILD_DISTANCE = 16
+
+        /**
+         * Rendering settings
+         */
+
+        const val RENDER_PLAYERS_DISTANCE = 15
     }
 }

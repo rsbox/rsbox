@@ -1,5 +1,7 @@
 package io.rsbox.engine.model
 
+import kotlin.math.abs
+
 class Tile(val packed: Int) {
 
     constructor(x: Int, y: Int, level: Int = 0) : this((x and 0x7FFF) or ((y and 0x7FFF) shl 15) or (level shl 30))
@@ -41,6 +43,17 @@ class Tile(val packed: Int) {
     operator fun component2(): Int = y
 
     operator fun component3(): Int = level
+
+    fun isWithinRadius(other: Tile, radius: Int): Boolean = isWithinRadius(other.x, other.y, other.level, radius)
+
+    fun isWithinRadius(otherX: Int, otherY: Int, otherLevel: Int, radius: Int): Boolean {
+        if(otherLevel != level) {
+            return false
+        }
+        val dx = abs(x - otherX)
+        val dy = abs(y - otherY)
+        return dx <= radius && dy <= radius
+    }
 
     val chunk: Chunk get() = Chunk(
         x / Chunk.SIZE,

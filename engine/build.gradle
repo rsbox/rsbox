@@ -13,4 +13,5 @@ dependencies {
     api "org.jetbrains.kotlinx:kotlinx-serialization-json:_"
     api "com.google.guava:guava:_"
     api "it.unimi.dsi:fastutil:_"
+    api "io.guthix:jagex-bytebuf:_"
 }

@@ -102,7 +102,7 @@ class Engine  {
 
     private suspend fun preCycle() {
         world.players.forEach { player ->
-            player.client.cycle()
+            player.preCycle()
         }
     }
 
@@ -112,6 +112,10 @@ class Engine  {
     private suspend fun cycle() {
         this.preCycle()
 
+        world.players.forEach { player ->
+            player.cycle()
+        }
+
         world.cycle()
 
         this.postCycle()
@@ -119,7 +123,7 @@ class Engine  {
 
     private suspend fun postCycle() {
         world.players.forEach { player ->
-            player.client.flush()
+            player.postCycle()
         }
     }
 

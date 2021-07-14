@@ -33,13 +33,6 @@ class Client {
 
     val viewport = Viewport(this)
 
-    /**
-     * Processed ever game server tick.
-     */
-    fun cycle() {
-        session.cycle()
-    }
-
     fun flush() = session.flush()
 
     fun write(packet: Packet) = session.write(packet)
