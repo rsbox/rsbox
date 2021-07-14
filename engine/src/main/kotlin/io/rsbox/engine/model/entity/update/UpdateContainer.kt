@@ -1,6 +1,6 @@
 package io.rsbox.engine.model.entity.update
 
-class UpdateStates {
+class UpdateContainer {
 
     /**
      * A bit packed value of all the updates for a given game cycle.
