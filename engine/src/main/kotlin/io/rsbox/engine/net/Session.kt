@@ -31,7 +31,6 @@ class Session(val ctx: ChannelHandlerContext) {
     private val messageQueue = LinkedBlockingQueue<Message>()
 
     fun connect() {
-        println("connected")
         /*
          * Add the decoder and encoder channel pipelines.
          */

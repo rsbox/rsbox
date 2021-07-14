@@ -3,7 +3,7 @@ package io.rsbox.engine.model.entity
 import io.rsbox.common.di.inject
 import io.rsbox.engine.Engine
 import io.rsbox.engine.model.Tile
-import io.rsbox.engine.model.world.World
+import io.rsbox.engine.model.World
 
 abstract class Entity {
 

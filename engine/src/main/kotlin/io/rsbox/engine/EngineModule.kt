@@ -1,6 +1,6 @@
 package io.rsbox.engine
 
-import io.rsbox.engine.model.world.World
+import io.rsbox.engine.model.World
 import io.rsbox.engine.service.ServiceManager
 import org.koin.dsl.module
 

@@ -3,9 +3,8 @@ package io.rsbox.engine
 import com.google.common.util.concurrent.ThreadFactoryBuilder
 import io.rsbox.common.di.inject
 import io.rsbox.engine.coroutine.GameCoroutineScope
-import io.rsbox.engine.model.world.World
+import io.rsbox.engine.model.World
 import io.rsbox.engine.module.XteaProvider
-import io.rsbox.engine.net.NetworkServer
 import io.rsbox.engine.service.ServiceManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.asCoroutineDispatcher

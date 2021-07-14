@@ -1,0 +1,13 @@
+subprojects {
+    dependencies {
+        implementation project(":common")
+        implementation project(":api")
+        implementation project(":engine")
+        implementation "org.jetbrains.kotlin:kotlin-script-runtime:_"
+        project(":plugins").subprojects.forEach {
+             if(it.name != project.name) {
+                 implementation(it)
+             }
+        }
+    }
+}

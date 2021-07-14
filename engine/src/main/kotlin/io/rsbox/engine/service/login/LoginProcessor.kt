@@ -5,15 +5,13 @@ import io.rsbox.common.hash.SHA256
 import io.rsbox.config.RSBoxConfig
 import io.rsbox.engine.event.event
 import io.rsbox.engine.event.impl.PlayerLoginEvent
-import io.rsbox.engine.model.`interface`.DisplayMode
-import io.rsbox.engine.model.`interface`.RootInterface
+import io.rsbox.engine.event.impl.PlayerPreLoginEvent
 import io.rsbox.engine.model.entity.Player
 import io.rsbox.engine.module.PlayerSerializer
 import io.rsbox.engine.net.ServerStatus
 import io.rsbox.engine.net.game.GameProtocol
 import io.rsbox.engine.net.login.LoginRequest
 import io.rsbox.engine.net.login.LoginResponse
-import io.rsbox.engine.net.packet.outbound.IfOpenTop
 import io.rsbox.engine.net.packet.outbound.RebuildRegionNormal
 import org.tinylog.kotlin.Logger
 
@@ -100,8 +98,15 @@ object LoginProcessor {
                 /*
                  * Fire the player login event.
                  */
-                event(PlayerLoginEvent(this)) {
-                    Logger.info("Login request successful for [username: $username] with ip [address: ${client.session.remoteAddress}]")
+                event(PlayerPreLoginEvent(this)) {
+                    session.write(RebuildRegionNormal(this, gpi = true))
+
+                    /*
+                     * Fire the post login event.
+                     */
+                    event(PlayerLoginEvent(this)) {
+                        Logger.info("Login request successful for [username: $username] with ip [address: ${client.session.remoteAddress}]")
+                    }
                 }
             }
         }

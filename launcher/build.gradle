@@ -14,4 +14,10 @@ dependencies {
     implementation project(":config")
     implementation project(":engine")
     implementation project(":api")
+    implementation project(":plugins")
+    project(":plugins").subprojects.forEach {
+        if(it.buildFile.exists()) {
+            implementation(it)
+        }
+    }
 }

@@ -1,4 +1,4 @@
-package io.rsbox.engine.model.world
+package io.rsbox.engine.model
 
 import io.rsbox.engine.model.entity.Player
 

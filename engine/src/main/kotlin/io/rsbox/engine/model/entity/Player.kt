@@ -1,13 +1,7 @@
 package io.rsbox.engine.model.entity
 
-import io.rsbox.engine.event.EventPriority
-import io.rsbox.engine.event.impl.PlayerLoginEvent
-import io.rsbox.engine.event.on_event
 import io.rsbox.engine.model.Tile
-import io.rsbox.engine.model.`interface`.DisplayMode
 import io.rsbox.engine.model.`interface`.InterfaceManager
-import io.rsbox.engine.net.packet.outbound.IfOpenTop
-import io.rsbox.engine.net.packet.outbound.RebuildRegionNormal
 
 /**
  * Represents a real human or bot player which is registered in the game world.
@@ -39,4 +33,10 @@ class Player(val client: Client) : LivingEntity() {
     fun isOffline(): Boolean = !isOnline()
 
     val interfaces = InterfaceManager(client)
+
+    /**
+     * The appearance data of the player.
+     */
+    var appearance = Appearance.DEFAULT
+
 }

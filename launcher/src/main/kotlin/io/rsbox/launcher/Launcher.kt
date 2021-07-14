@@ -1,5 +1,7 @@
 package io.rsbox.launcher
 
+import io.rsbox.api.ApiModule
+import io.rsbox.api.plugin.PluginManager
 import io.rsbox.cache.CacheModule
 import io.rsbox.cache.GameCache
 import io.rsbox.common.CommonModule
@@ -12,8 +14,6 @@ import io.rsbox.engine.Engine
 import io.rsbox.engine.EngineModule
 import io.rsbox.engine.net.NetworkModule
 import io.rsbox.engine.net.NetworkServer
-import io.rsbox.plugin.PluginManager
-import io.rsbox.plugin.PluginModule
 import org.koin.core.context.startKoin
 import org.tinylog.kotlin.Logger
 import java.io.File
@@ -59,7 +59,7 @@ class Launcher {
         engine.start()
 
         /*
-         * Start the RSBox content plugins.
+         * Enable all plugins.
          */
         pluginManager.loadAllPlugins()
 
@@ -124,7 +124,7 @@ class Launcher {
                     EngineModule,
                     NetworkModule,
                     CommonModule,
-                    PluginModule
+                    ApiModule
                 )
             }
         }

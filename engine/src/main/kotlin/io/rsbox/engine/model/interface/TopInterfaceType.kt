@@ -1,6 +1,6 @@
 package io.rsbox.engine.model.`interface`
 
-enum class RootInterface(
+enum class TopInterfaceType(
     val interfaceId: Int,
     val fixedModeChild: Int,
     val resizableNormalChild: Int,
@@ -59,9 +59,9 @@ enum class RootInterface(
     }
 
     companion object {
-        val values = enumValues<RootInterface>()
+        val values = enumValues<TopInterfaceType>()
 
-        fun RootInterface.child(displayMode: DisplayMode): Int = when(displayMode) {
+        fun TopInterfaceType.child(displayMode: DisplayMode): Int = when(displayMode) {
             DisplayMode.FIXED -> this.fixedModeChild
             DisplayMode.RESIZABLE_NORMAL -> this.resizableNormalChild
             DisplayMode.RESIZABLE_LIST -> this.resizableListChild

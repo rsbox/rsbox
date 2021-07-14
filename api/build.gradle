@@ -1,4 +1,6 @@
 dependencies {
     implementation project(":common")
     implementation project(":engine")
+    implementation "org.jetbrains.kotlin:kotlin-scripting-common:_"
+    implementation "org.jetbrains.kotlin:kotlin-script-runtime:_"
 }
